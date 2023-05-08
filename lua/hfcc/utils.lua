@@ -1,23 +1,5 @@
 local M = {}
 
-local escape_char_map = {
-  ["\\"] = "\\\\",
-  ['"'] = '\\"',
-  ["\b"] = "\\b",
-  ["\f"] = "\\f",
-  ["\n"] = "\\n",
-  ["\r"] = "\\r",
-  ["\t"] = "\\t",
-}
-
-local function escape_char(c)
-  return escape_char_map[c] or string.format("\\u%04x", c:byte())
-end
-
-M.json_encode = function(str)
-  return str:gsub('[%z\1-\31\\"]', escape_char)
-end
-
 M.dump_table = function(o)
   if type(o) == "table" then
     local s = "{ "
@@ -55,6 +37,14 @@ M.split_str = function(str, separator)
 
   table.insert(parts, string.sub(str, start))
   return parts
+end
+
+M.rstrip = function(s)
+  return string.gsub(s, "\n*$", "")
+end
+
+M.startswith = function(str, begin)
+  return str:sub(1, #begin) == begin
 end
 
 return M

@@ -3,6 +3,7 @@ local utils = require("hfcc.utils")
 ---@class hfcc_config
 local default_config = {
   api_token = "",
+  model = "bigcode/starcoder",
 }
 
 local M = {
