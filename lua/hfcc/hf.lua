@@ -19,7 +19,6 @@ local function extract_generation(data)
     return ""
   end
   local raw_generated_text = decoded_json[1].generated_text
-  print(raw_generated_text)
   local after_fim_mid = utils.string_after_delim(raw_generated_text, "<fim_middle>")
   if after_fim_mid == nil then
     return ""

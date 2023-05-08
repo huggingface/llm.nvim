@@ -6,6 +6,9 @@ This Neovim client is like Copilot but you can pick your model on the Hugging Fa
 
 Heavily inspired by [copilot.lua](https://github.com/zbirenbaum/copilot.lua) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
 
+
+![demonstration use of hfcc.nvim](assets/hfcc_demo.gif)
+
 ## Install
 
 1. Get your API token from here https://huggingface.co/settings/tokens.
