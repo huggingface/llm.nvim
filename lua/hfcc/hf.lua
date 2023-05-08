@@ -19,6 +19,7 @@ local function extract_generation(data)
     return ""
   end
   local raw_generated_text = decoded_json[1].generated_text
+  print(raw_generated_text)
   local after_fim_mid = utils.string_after_delim(raw_generated_text, "<fim_middle>")
   if after_fim_mid == nil then
     return ""
@@ -51,10 +52,11 @@ M.fetch_suggestion = function(request, callback)
   local f = assert(io.open("/tmp/inputs.json", "w"))
   f:write(json.encode(request_body))
   f:close()
+  local row, col = utils.get_cursor_pos()
   fn.jobstart(query, {
     on_stdout = function(jobid, data, event)
       if data[1] ~= "" then
-        callback(extract_generation(data))
+        callback(extract_generation(data), row, col)
       end
     end,
   })
