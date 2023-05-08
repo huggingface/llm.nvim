@@ -23,7 +23,7 @@ require("packer").startup(function(use)
     'huggingface/hfcc.nvim',
     config = function()
       require('hfcc').setup({
-        api_token = "<insert your api token here>"
+        api_token = "<insert your api token here>",
         model = "bigcode/starcoder" -- can be a model ID or an http endpoint
       })
     end
@@ -38,7 +38,7 @@ require("lazy").setup({
   {
     'huggingface/hfcc.nvim',
     opts = {
-      api_token = "<insert your api token here>"
+      api_token = "<insert your api token here>",
       model = "bigcode/starcoder" -- can be a model ID or an http endpoint
     }
   },
