@@ -1,5 +1,3 @@
-local utils = require("hfcc.utils")
-
 ---@class hfcc_config
 local default_config = {
   api_token = "",
@@ -9,7 +7,14 @@ local default_config = {
     max_new_tokens = 60,
     temperature = 0.2,
     top_p = 0.95,
-    stop_token = { "<|endoftext|>" },
+    stop_token = "<|endoftext|>",
+  },
+  ---@class hfcc_config_fim
+  fim = {
+    enabled = true,
+    prefix = "<fim_prefix>",
+    middle = "<fim_middle>",
+    suffix = "<fim_suffix>",
   },
 }
 
