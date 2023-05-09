@@ -56,4 +56,12 @@ M.get_cursor_pos = function()
   return unpack(vim.api.nvim_win_get_cursor(0))
 end
 
+M.table_len = function(t)
+  local count = 0
+  for _ in pairs(t) do
+    count = count + 1
+  end
+  return count
+end
+
 return M
