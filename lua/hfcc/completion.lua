@@ -5,7 +5,7 @@ local hf = require("hfcc.hf")
 local utils = require("hfcc.utils")
 local M = {}
 
-local function parse_response(before, response)
+local function parse_response(prefix_len, response)
   local fim = config.get("fim")
   local stop_token = config.get("query_params").stop_token
 
@@ -17,7 +17,7 @@ local function parse_response(before, response)
     local clean_response = utils.rstrip(after_fim_mid:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   else
-    local prefix_removed = string.sub(response, #before + 1)
+    local prefix_removed = string.sub(response, prefix_len + 1)
     local clean_response = utils.rstrip(prefix_removed:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   end
@@ -26,6 +26,7 @@ end
 function M.complete()
   local before_table = api.nvim_buf_get_text(0, 0, 0, fn.line(".") - 1, fn.col("."), {})
   local before = table.concat(before_table, "\n")
+  local before_len = string.len(before)
 
   local after_table = api.nvim_buf_get_text(0, fn.line(".") - 1, fn.col("."), -1, -1, {})
   local after = table.concat(after_table, "\n")
@@ -34,7 +35,7 @@ function M.complete()
     if response == "" then
       return
     end
-    local lines = parse_response(before, response)
+    local lines = parse_response(before_len, response)
     if lines == nil then
       return
     end
