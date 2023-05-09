@@ -4,6 +4,13 @@ local utils = require("hfcc.utils")
 local default_config = {
   api_token = "",
   model = "bigcode/starcoder",
+  ---@class hfcc_config_query_params
+  query_params = {
+    max_new_tokens = 60,
+    temperature = 0.2,
+    top_p = 0.95,
+    stop_token = { "<|endoftext|>" },
+  },
 }
 
 local M = {

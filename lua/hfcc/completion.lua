@@ -12,6 +12,9 @@ function M.complete()
   local after = table.concat(after_table, "\n")
 
   hf.fetch_suggestion({ before = before, after = after }, function(response, r, _)
+    if response == "" then
+      return
+    end
     local lines = utils.split_str(response, "\n")
     local lines_len = utils.table_len(lines)
     local line = api.nvim_buf_get_lines(0, r - 1, r, false)[1]
