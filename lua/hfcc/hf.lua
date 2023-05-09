@@ -35,6 +35,26 @@ local function get_url()
   end
 end
 
+local function create_payload(request)
+  local params = config.get("query_params")
+  if params == nil then
+    error("[HFcc] not initialized")
+  end
+  local request_body = {
+    inputs = build_inputs(request.before, request.after),
+    parameters = {
+      max_new_tokens = params.max_new_tokens,
+      temperature = params.temperature,
+      do_sample = params.temperature > 0,
+      top_p = params.top_p,
+      stop = params.stop_token,
+    }
+  }
+  local f = assert(io.open("/tmp/inputs.json", "w"))
+  f:write(json.encode(request_body))
+  f:close()
+end
+
 M.fetch_suggestion = function(request, callback)
   local api_token = config.get("api_token")
   if api_token == "" then
@@ -45,12 +65,7 @@ M.fetch_suggestion = function(request, callback)
       -H "Content-type: application/json" \z
       -H "Authorization: Bearer ' .. api_token .. '" \z
       -d@/tmp/inputs.json'
-  local request_body = {
-    inputs = build_inputs(request.before, request.after)
-  }
-  local f = assert(io.open("/tmp/inputs.json", "w"))
-  f:write(json.encode(request_body))
-  f:close()
+  create_payload(request)
   local row, col = utils.get_cursor_pos()
   fn.jobstart(query, {
     on_stdout = function(jobid, data, event)
