@@ -5,7 +5,12 @@ local utils = require("hfcc.utils")
 local M = {}
 
 local function build_inputs(before, after)
-  return "<fim_prefix>" .. before .. "<fim_suffix>" .. after .. "<fim_middle>"
+  local fim = config.get("fim")
+  if fim.enabled then
+    return fim.prefix .. before .. fim.suffix .. after .. fim.middle
+  else
+    return before
+  end
 end
 
 local function extract_generation(data)
@@ -19,11 +24,7 @@ local function extract_generation(data)
     return ""
   end
   local raw_generated_text = decoded_json[1].generated_text
-  local after_fim_mid = utils.string_after_delim(raw_generated_text, "<fim_middle>")
-  if after_fim_mid == nil then
-    return ""
-  end
-  return utils.rstrip(after_fim_mid:gsub("<|endoftext|>", ""))
+  return raw_generated_text
 end
 
 local function get_url()
@@ -37,9 +38,6 @@ end
 
 local function create_payload(request)
   local params = config.get("query_params")
-  if params == nil then
-    error("[HFcc] not initialized")
-  end
   local request_body = {
     inputs = build_inputs(request.before, request.after),
     parameters = {
@@ -47,7 +45,7 @@ local function create_payload(request)
       temperature = params.temperature,
       do_sample = params.temperature > 0,
       top_p = params.top_p,
-      stop = params.stop_token,
+      stop = { params.stop_token },
     }
   }
   local f = assert(io.open("/tmp/inputs.json", "w"))
