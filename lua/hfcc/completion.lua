@@ -28,7 +28,7 @@ function M.complete()
   local before = table.concat(before_table, "\n")
   local before_len = string.len(before)
 
-  local after_table = api.nvim_buf_get_text(0, fn.line(".") - 1, fn.col("."), -1, -1, {})
+  local after_table = api.nvim_buf_get_text(0, fn.line(".") - 1, fn.col("."), fn.line("$") - 1, fn.col("$"), {})
   local after = table.concat(after_table, "\n")
 
   hf.fetch_suggestion({ before = before, after = after }, function(response, r, _)
