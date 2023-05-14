@@ -44,3 +44,14 @@ require("lazy").setup({
   },
 })
 ```
+
+### Using [vim-plug](https://github.com/folke/lazy.nvim)
+```vim
+Plug 'https://github.com/huggingface/hfcc.nvim'
+```
+```lua
+require('hfcc').setup({
+        api_token = "<insert your api token here>",
+        model = "bigcode/starcoder" -- can be a model ID or an http endpoint
+      })
+```
