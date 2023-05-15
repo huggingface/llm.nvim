@@ -51,7 +51,6 @@ Plug 'huggingface/hfcc.nvim'
 ```
 ```lua
 require('hfcc').setup({
-        api_token = "<insert your api token here>",
-        model = "bigcode/starcoder" -- can be a model ID or an http endpoint
-      })
+  model = "bigcode/starcoder" -- can be a model ID or an http endpoint
+})
 ```
