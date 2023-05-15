@@ -49,6 +49,17 @@ require("lazy").setup({
 })
 ```
 
+### Using [vim-plug](https://github.com/junegunn/vim-plug)
+
+```vim
+Plug 'huggingface/hfcc.nvim'
+```
+```lua
+require('hfcc').setup({
+  -- cf Setup
+})
+```
+
 ## Setup
 
 ```lua
