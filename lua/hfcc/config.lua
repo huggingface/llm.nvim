@@ -22,6 +22,22 @@ local M = {
   config = nil,
 }
 
+local function get_token()
+  local api_token = os.getenv("HUGGING_FACE_HUB_TOKEN")
+  if api_token == nil then
+    local default_home = os.getenv("HOME") .. "/.cache"
+    local hf_cache_home = os.getenv("HF_HOME") or (default_home .. "/huggingface")
+    local f = io.open(hf_cache_home .. "/token", "r")
+    if not f then
+      api_token = ""
+    else
+      api_token = f:read("*a")
+      f:close()
+    end
+  end
+  return api_token
+end
+
 function M.setup(opts)
   if M.config then
     vim.notify("[HFcc] config is already set", vim.log.levels.WARN)
@@ -29,6 +45,10 @@ function M.setup(opts)
   end
 
   local config = vim.tbl_deep_extend("force", default_config, opts or {})
+
+  if config.api_token == "" then
+    config.api_token = get_token()
+  end
 
   M.config = config
 
