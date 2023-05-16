@@ -67,7 +67,7 @@ local hfcc = require('hfcc')
 
 hfcc.setup({
   api_token = "", -- cf Install paragraph
-  model = "bigcode/starcoder" -- can be a model ID or an http(s) endpoint
+  model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
   -- parameters that are added to the request body
   query_params = {
     max_new_tokens = 60,
