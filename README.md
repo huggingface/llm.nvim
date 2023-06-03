@@ -84,3 +84,10 @@ hfcc.setup({
   },
 })
 ```
+
+## Commands
+
+There are currently two commands:
+- `HFccSuggestion` which was left in case people depended on it, depending on feedback will probably be removed
+- `HFccToggleAutoSuggest` which enables/disables insert mode suggest-as-you-type suggestions
+

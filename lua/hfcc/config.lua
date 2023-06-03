@@ -1,7 +1,7 @@
 ---@class hfcc_config
 local default_config = {
   api_token = "",
-  model = "bigcode/starcoder",
+  model = "bigcode/starcoderbase",
   ---@class hfcc_config_query_params
   query_params = {
     max_new_tokens = 60,

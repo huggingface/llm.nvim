@@ -4,7 +4,11 @@ local M = { setup_done = false }
 
 local create_cmds = function()
   vim.api.nvim_create_user_command("HFccSuggestion", function()
-    completion.complete()
+    completion.complete_command()
+  end, {})
+
+  vim.api.nvim_create_user_command("HFccToggleAutoSuggest", function()
+    completion.toggle_suggestion()
   end, {})
 end
 
@@ -16,6 +20,8 @@ M.setup = function(opts)
   create_cmds()
 
   config.setup(opts)
+
+  completion.create_autocmds()
 
   M.setup_done = true
 end
