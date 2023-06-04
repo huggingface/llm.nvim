@@ -82,5 +82,15 @@ hfcc.setup({
     middle = "<fim_middle>",
     suffix = "<fim_suffix>",
   },
+  debounce_ms = 80,
+  accept_keymap = "<Tab>",
+  dismiss_keymap = "<S-Tab>",
 })
 ```
+
+## Commands
+
+There are currently two commands:
+- `HFccSuggestion` which was left in case people depended on it, depending on feedback will probably be removed
+- `HFccToggleAutoSuggest` which enables/disables insert mode suggest-as-you-type suggestions
+

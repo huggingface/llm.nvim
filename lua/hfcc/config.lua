@@ -1,7 +1,7 @@
 ---@class hfcc_config
 local default_config = {
   api_token = "",
-  model = "bigcode/starcoder",
+  model = "bigcode/starcoderbase",
   ---@class hfcc_config_query_params
   query_params = {
     max_new_tokens = 60,
@@ -16,6 +16,9 @@ local default_config = {
     middle = "<fim_middle>",
     suffix = "<fim_suffix>",
   },
+  debounce_ms = 80,
+  accept_keymap = "<Tab>",
+  dismiss_keymap = "<S-Tab>",
 }
 
 local M = {
@@ -55,14 +58,9 @@ function M.setup(opts)
   return M.config
 end
 
----@param key? string
-function M.get(key)
+function M.get()
   if not M.config then
     error("[HFcc] not initialized")
-  end
-
-  if key then
-    return M.config[key]
   end
 
   return M.config
