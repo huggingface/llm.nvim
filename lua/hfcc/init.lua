@@ -1,5 +1,7 @@
 local completion = require("hfcc.completion")
 local config = require("hfcc.config")
+local keymaps = require("hfcc.keymaps")
+
 local M = { setup_done = false }
 
 local create_cmds = function()
@@ -21,7 +23,10 @@ M.setup = function(opts)
 
   config.setup(opts)
 
+  completion.setup()
   completion.create_autocmds()
+
+  keymaps.setup()
 
   M.setup_done = true
 end

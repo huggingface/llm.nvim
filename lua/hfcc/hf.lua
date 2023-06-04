@@ -2,10 +2,11 @@ local config = require("hfcc.config")
 local fn = vim.fn
 local json = vim.json
 local utils = require("hfcc.utils")
+
 local M = {}
 
 local function build_inputs(before, after)
-  local fim = config.get("fim")
+  local fim = config.get().fim
   if fim.enabled then
     return fim.prefix .. before .. fim.suffix .. after .. fim.middle
   else
@@ -28,7 +29,7 @@ local function extract_generation(data)
 end
 
 local function get_url()
-  local model = config.get("model")
+  local model = config.get().model
   if utils.startswith(model, "http://") or utils.startswith(model, "https://") then
     return model
   else
@@ -37,7 +38,7 @@ local function get_url()
 end
 
 local function create_payload(request)
-  local params = config.get("query_params")
+  local params = config.get().query_params
   local request_body = {
     inputs = build_inputs(request.before, request.after),
     parameters = {
@@ -54,7 +55,7 @@ local function create_payload(request)
 end
 
 M.fetch_suggestion = function(request, callback)
-  local api_token = config.get("api_token")
+  local api_token = config.get().api_token
   if api_token == "" then
     vim.notify("[HFcc] api token is empty, suggestion might not work", vim.log.levels.WARN)
   end
@@ -65,7 +66,7 @@ M.fetch_suggestion = function(request, callback)
       -d@/tmp/inputs.json'
   create_payload(request)
   local row, col = utils.get_cursor_pos()
-  fn.jobstart(query, {
+  return fn.jobstart(query, {
     on_stdout = function(jobid, data, event)
       if data[1] ~= "" then
         callback(extract_generation(data), row, col)

@@ -82,6 +82,9 @@ hfcc.setup({
     middle = "<fim_middle>",
     suffix = "<fim_suffix>",
   },
+  debounce_ms = 80,
+  accept_keymap = "<Tab>",
+  dismiss_keymap = "<S-Tab>",
 })
 ```
 
