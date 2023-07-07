@@ -34,7 +34,7 @@ local function get_token()
     if not f then
       api_token = ""
     else
-      api_token = f:read("*a")
+      api_token = string.gsub(f:read("*a"), "[\n\r]", "")
       f:close()
     end
   end
