@@ -125,6 +125,7 @@ function M.complete()
     api.nvim_win_set_cursor(0, { row_offset, col_offset })
 
     M.suggestion = nil
+    vim.defer_fn(M.schedule, 10)
   end
 end
 
@@ -142,8 +143,9 @@ function M.create_autocmds()
   api.nvim_create_augroup(augroup, { clear = true })
 
   api.nvim_create_autocmd("InsertLeave", { pattern = "*", callback = M.cancel })
+  api.nvim_create_autocmd("CursorMovedI", { pattern = "*", callback = M.cancel })
 
-  api.nvim_create_autocmd("CursorMovedI", {
+  api.nvim_create_autocmd("CursorHoldI", {
     pattern = "*",
     callback = function()
       if M.should_complete() then
@@ -154,6 +156,7 @@ function M.create_autocmds()
       end
     end,
   })
+
 end
 
 function M.setup()
