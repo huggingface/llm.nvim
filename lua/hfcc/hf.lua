@@ -49,7 +49,7 @@ local function create_payload(request)
       stop = { params.stop_token },
     },
   }
-  local f = assert(io.open("/tmp/inputs.json", "w"))
+  local f = assert(io.open(os.getenv("HOME") .. "/.tmp_hfcc_inputs.json", "w"))
   f:write(json.encode(request_body))
   f:close()
 end
@@ -66,7 +66,9 @@ M.fetch_suggestion = function(request, callback)
       -H "Authorization: Bearer '
     .. api_token
     .. '" \z
-      -d@/tmp/inputs.json'
+      -d@'
+    .. os.getenv("HOME")
+    .. "/.tmp_hfcc_inputs.json"
   create_payload(request)
   local row, col = utils.get_cursor_pos()
   return fn.jobstart(query, {
