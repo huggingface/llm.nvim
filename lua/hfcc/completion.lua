@@ -41,6 +41,25 @@ local function get_context()
   local after_table = api.nvim_buf_get_text(0, fn.line(".") - 1, fn.col("."), fn.line("$") - 1, fn.col("$"), {})
   local after = table.concat(after_table, "\n")
 
+  local before_len = string.len(before)
+  local after_len = string.len(before)
+
+  local before_start = before_len - config.get().max_context_before
+  local after_end = after_len + config.get().max_context_after
+
+  if before_start < 0 then
+      before_start = 0
+  end
+
+  if after_end > after_len then
+      after_end = after_len
+  end
+
+  before = string.sub(before, before_start, before_len)
+  after = string.sub(after, 0, after_end)
+
+
+
   return before, after
 end
 
