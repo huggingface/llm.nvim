@@ -41,6 +41,14 @@ local function get_context()
   local after_table = api.nvim_buf_get_text(0, fn.line(".") - 1, fn.col("."), fn.line("$") - 1, fn.col("$"), {})
   local after = table.concat(after_table, "\n")
 
+  if string.len(before) > config.get().max_context_before then
+    before = string.sub(before, string.len(before) - config.get().max_context_before + 1, string.len(before))
+  end
+
+  if string.len(after) > config.get().max_context_after then
+    after = string.sub(after, 0, config.get().max_context_after)
+  end
+
   return before, after
 end
 

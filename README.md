@@ -85,6 +85,8 @@ hfcc.setup({
   debounce_ms = 80,
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
+  max_context_after = 5000,
+  max_context_before = 5000,
 })
 ```
 
