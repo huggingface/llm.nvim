@@ -47,7 +47,7 @@ local function create_payload(request)
       do_sample = params.temperature > 0,
       top_p = params.top_p,
       stop = { params.stop_token },
-    }
+    },
   }
   local f = assert(io.open("/tmp/inputs.json", "w"))
   f:write(json.encode(request_body))
@@ -59,14 +59,18 @@ M.fetch_suggestion = function(request, callback)
   if api_token == "" then
     vim.notify("[HFcc] api token is empty, suggestion might not work", vim.log.levels.WARN)
   end
-  local query =
-      'curl "' .. get_url() .. '" \z
+  local query = 'curl "'
+    .. get_url()
+    .. '" \z
       -H "Content-type: application/json" \z
-      -H "Authorization: Bearer ' .. api_token .. '" \z
+      -H "Authorization: Bearer '
+    .. api_token
+    .. '" \z
       -d@/tmp/inputs.json'
   create_payload(request)
   local row, col = utils.get_cursor_pos()
   return fn.jobstart(query, {
+    stdout_buffered = true,
     on_stdout = function(jobid, data, event)
       if data[1] ~= "" then
         callback(extract_generation(data), row, col)
