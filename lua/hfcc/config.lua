@@ -20,7 +20,8 @@ local default_config = {
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
   max_context_after = 5000,
-  max_context_before = 5000
+  max_context_before = 5000,
+  tls_skip_verify_insecure = false,
 }
 
 local M = {

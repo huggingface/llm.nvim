@@ -54,6 +54,15 @@ local function create_payload(request)
   f:close()
 end
 
+local function create_curl_options()
+  local curl_options = ""
+  local tls_skip_verify_insecure = config.get().tls_skip_verify_insecure
+  if tls_skip_verify_insecure == true then
+    curl_options = curl_options .. " --insecure "
+  end
+  return curl_options
+end
+
 M.fetch_suggestion = function(request, callback)
   local api_token = config.get().api_token
   if api_token == "" then
@@ -69,6 +78,7 @@ M.fetch_suggestion = function(request, callback)
       -d@'
     .. os.getenv("HOME")
     .. "/.tmp_hfcc_inputs.json"
+    .. create_curl_options()
   create_payload(request)
   local row, col = utils.get_cursor_pos()
   return fn.jobstart(query, {
