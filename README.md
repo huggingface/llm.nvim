@@ -87,6 +87,7 @@ hfcc.setup({
   dismiss_keymap = "<S-Tab>",
   max_context_after = 5000,
   max_context_before = 5000,
+  tls_skip_verify_insecure = false,
 })
 ```
 
