@@ -1,6 +1,6 @@
 ---@class hfcc_config
 local default_config = {
-  api_token = "",
+  api_token = nil,
   model = "bigcode/starcoderbase",
   ---@class hfcc_config_query_params
   query_params = {
@@ -35,7 +35,7 @@ local function get_token()
     local hf_cache_home = os.getenv("HF_HOME") or (default_home .. "/huggingface")
     local f = io.open(hf_cache_home .. "/token", "r")
     if not f then
-      api_token = ""
+      api_token = nil
     else
       api_token = string.gsub(f:read("*a"), "[\n\r]", "")
       f:close()
@@ -52,7 +52,7 @@ function M.setup(opts)
 
   local config = vim.tbl_deep_extend("force", default_config, opts or {})
 
-  if config.api_token == "" then
+  if config.api_token == nil then
     config.api_token = get_token()
   end
 
