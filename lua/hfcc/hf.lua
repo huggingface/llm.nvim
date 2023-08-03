@@ -63,19 +63,21 @@ local function create_curl_options()
   return curl_options
 end
 
-M.fetch_suggestion = function(request, callback)
+local function get_authorization_header()
   local api_token = config.get().api_token
-  if api_token == "" then
-    vim.notify("[HFcc] api token is empty, suggestion might not work", vim.log.levels.WARN)
+  if api_token == nil then
+    return ""
+  else
+    return '-H "Authorization: Bearer ' .. api_token .. '" '
   end
+end
+
+M.fetch_suggestion = function(request, callback)
   local query = 'curl "'
     .. get_url()
-    .. '" \z
-      -H "Content-type: application/json" \z
-      -H "Authorization: Bearer '
-    .. api_token
-    .. '" \z
-      -d@'
+    .. '" -H "Content-type: application/json" '
+    .. get_authorization_header()
+    .. "-d@"
     .. os.getenv("HOME")
     .. "/.tmp_hfcc_inputs.json"
     .. create_curl_options()

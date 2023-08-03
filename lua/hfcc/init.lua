@@ -23,6 +23,11 @@ M.setup = function(opts)
 
   config.setup(opts)
 
+  local api_token = config.get().api_token
+  if api_token == nil then
+    vim.notify("[HFcc] api token is empty, suggestion might not work", vim.log.levels.DEBUG)
+  end
+
   completion.setup()
   completion.create_autocmds()
 
