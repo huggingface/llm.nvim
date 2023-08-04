@@ -19,7 +19,9 @@ Heavily inspired by [copilot.lua](https://github.com/zbirenbaum/copilot.lua) and
     3. You can define your `HF_HOME` environment variable and create a file containing your token at `$HF_HOME/token`
     4. Install the [huggingface-cli](https://huggingface.co/docs/huggingface_hub/quick-start) and run `huggingface-cli login` - this will prompt you to enter your token and set it at the right path
 
-3. Choose your model on the [Hugging Face Hub](https://huggingface.co/)
+3. Choose your model on the [Hugging Face Hub](https://huggingface.co/), and, in order of precedence, you can either:
+    1. Set the `HUGGING_FACE_HUB_MODEL` environment variable
+    2. Pass `model = <model token>` in plugin opts
 
 ### Using [packer](https://github.com/wbthomason/packer.nvim)
 

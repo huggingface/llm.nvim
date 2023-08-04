@@ -29,7 +29,10 @@ local function extract_generation(data)
 end
 
 local function get_url()
-  local model = config.get().model
+  local model = os.getenv("HUGGING_FACE_HUB_MODEL")
+  if model == nil then
+    model = config.get().model
+  end
   if utils.startswith(model, "http://") or utils.startswith(model, "https://") then
     return model
   else
