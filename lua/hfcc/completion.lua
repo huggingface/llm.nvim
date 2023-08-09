@@ -87,7 +87,7 @@ end
 function M.schedule()
   M.cancel()
 
-  M.timer = fn.timer_start(config.debounce_ms, function()
+  M.timer = fn.timer_start(config.get().debounce_ms, function()
     if fn.mode() == "i" then
       M.suggest()
     end
