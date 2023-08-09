@@ -16,7 +16,7 @@ local default_config = {
     middle = "<fim_middle>",
     suffix = "<fim_suffix>",
   },
-  debounce_ms = 80,
+  debounce_ms = 150,
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
   max_context_after = 5000,
