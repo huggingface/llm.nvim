@@ -2,11 +2,11 @@
 
 **WIP**: this is a PoC at the moment
 
-This Neovim client is like Copilot but you can pick your model on the Hugging Face Hub.
+`hfcc.nvim` is an autocompletion plugin similar to Copilot with the added benefit of letting you pick your model on the Hugging Face Hub.
 
-You can also use any HTTP endpoint you want, given it respects the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task).
+You can also use any HTTP endpoint you want, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task).
 
-Heavily inspired by [copilot.lua](https://github.com/zbirenbaum/copilot.lua) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
+This project is influenced by [copilot.lua](https://github.com/zbirenbaum/copilot.lua) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
 
 
 ![demonstration use of hfcc.nvim](assets/hfcc_demo.gif)
