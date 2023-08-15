@@ -33,7 +33,6 @@ function M.get_completions(callback)
   params.request_params.do_sample = config.get().query_params.temperature > 0
   params.fim = config.get().fim
 
-  vim.print(params)
   local status, request_id = lsp.get_client_by_id(M.client_id).request("llm-ls/getCompletions", params, callback, 0)
 
   if not status then
