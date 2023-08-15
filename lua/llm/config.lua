@@ -1,15 +1,15 @@
----@class hfcc_config
+---@class llm_config
 local default_config = {
   api_token = nil,
   model = "bigcode/starcoderbase",
-  ---@class hfcc_config_query_params
+  ---@class llm_config_query_params
   query_params = {
     max_new_tokens = 60,
     temperature = 0.2,
     top_p = 0.95,
     stop_token = "<|endoftext|>",
   },
-  ---@class hfcc_config_fim
+  ---@class llm_config_fim
   fim = {
     enabled = true,
     prefix = "<fim_prefix>",
@@ -22,6 +22,10 @@ local default_config = {
   max_context_after = 5000,
   max_context_before = 5000,
   tls_skip_verify_insecure = false,
+  lsp = {
+    enabled = false,
+    bin_path = "~/.local/share/nvim/llm_nvim/bin",
+  },
 }
 
 local M = {
@@ -29,7 +33,7 @@ local M = {
 }
 
 local function get_token()
-  local api_token = os.getenv("HUGGING_FACE_HUB_TOKEN")
+  local api_token = os.getenv("LLM_NVIM_API_TOKEN")
   if api_token == nil then
     local default_home = os.getenv("HOME") .. "/.cache"
     local hf_cache_home = os.getenv("HF_HOME") or (default_home .. "/huggingface")
@@ -46,7 +50,7 @@ end
 
 function M.setup(opts)
   if M.config then
-    vim.notify("[HFcc] config is already set", vim.log.levels.WARN)
+    vim.notify("[LLM] config is already set", vim.log.levels.WARN)
     return M.config
   end
 
@@ -63,7 +67,7 @@ end
 
 function M.get()
   if not M.config then
-    error("[HFcc] not initialized")
+    error("[LLM] not initialized")
   end
 
   return M.config

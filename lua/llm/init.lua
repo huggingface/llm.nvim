@@ -1,15 +1,12 @@
-local completion = require("hfcc.completion")
-local config = require("hfcc.config")
-local keymaps = require("hfcc.keymaps")
+local completion = require("llm.completion")
+local config = require("llm.config")
+local keymaps = require("llm.keymaps")
+local llm_ls = require("llm.language_server")
 
 local M = { setup_done = false }
 
 local create_cmds = function()
-  vim.api.nvim_create_user_command("HFccSuggestion", function()
-    completion.complete_command()
-  end, {})
-
-  vim.api.nvim_create_user_command("HFccToggleAutoSuggest", function()
+  vim.api.nvim_create_user_command("LLMToggleAutoSuggest", function()
     completion.toggle_suggestion()
   end, {})
 end
@@ -25,8 +22,10 @@ M.setup = function(opts)
 
   local api_token = config.get().api_token
   if api_token == nil then
-    vim.notify("[HFcc] api token is empty, suggestion might not work", vim.log.levels.DEBUG)
+    vim.notify("[LLM] api token is empty, suggestion might not work", vim.log.levels.DEBUG)
   end
+
+  llm_ls.setup()
 
   completion.setup()
   completion.create_autocmds()

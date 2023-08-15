@@ -1,15 +1,30 @@
-# 🤗 Hugging Face Code Completion for Neovim
+# LLM powered development for Neovim
 
-**WIP**: this is a PoC at the moment
+> [!IMPORTANT]
+> This is currently a work in progress.
 
-**hfcc.nvim** is an autocompletion plugin similar to Copilot with the added benefit of letting you pick your model on the Hugging Face Hub.
+**llm.nvim** is a plugin for all things LLM-related.
+
+This project is influenced by [copilot.vim](https://github.com/github/copilot.vim) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
+
+Formerly **hfcc.nvim**.
+
+![demonstration use of llm.nvim](assets/llm_nvim_demo.gif)
+
+## Features
+
+### Code completion
+
+This plugin supports code completion "ghost-text" style, a la Copilot.
+
+
+**llm.nvim** is an autocompletion plugin similar to Copilot with the added benefit of letting you pick your model on the Hugging Face Hub.
 
 You can also use any HTTP endpoint you want, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task).
 
-This project is influenced by [copilot.lua](https://github.com/zbirenbaum/copilot.lua) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
+You can also use it in conjunction with [llm-ls]() a language server where new features and development will happen.
 
-
-![demonstration use of hfcc.nvim](assets/hfcc_demo.gif)
+You can use it as a standalone plugin that will curl a model on the Hugging Face Hub or the API of your choice.
 
 ## Install
 
@@ -17,12 +32,12 @@ This project is influenced by [copilot.lua](https://github.com/zbirenbaum/copilo
 
 2. Define how the plugin will read your token. For this you have multiple options, in order of precedence:
     1. Pass `api_token = <your token>` in plugin opts - this is not recommended if you use a versioning tool for your configuration files
-    2. Set the `HUGGING_FACE_HUB_TOKEN` environment variable
+    2. Set the `LLM_NVIM_API_TOKEN` environment variable
     3. You can define your `HF_HOME` environment variable and create a file containing your token at `$HF_HOME/token`
     4. Install the [huggingface-cli](https://huggingface.co/docs/huggingface_hub/quick-start) and run `huggingface-cli login` - this will prompt you to enter your token and set it at the right path
 
 3. Choose your model on the [Hugging Face Hub](https://huggingface.co/), and, in order of precedence, you can either:
-    1. Set the `HUGGING_FACE_HUB_MODEL` environment variable
+    1. Set the `LLM_NVIM_MODEL` environment variable
     2. Pass `model = <model token>` in plugin opts
 
 ### Using [packer](https://github.com/wbthomason/packer.nvim)
@@ -30,9 +45,9 @@ This project is influenced by [copilot.lua](https://github.com/zbirenbaum/copilo
 ```lua
 require("packer").startup(function(use)
   use {
-    'huggingface/hfcc.nvim',
+    'huggingface/llm.nvim',
     config = function()
-      require('hfcc').setup({
+      require('llm').setup({
         -- cf Setup
       })
     end
@@ -45,7 +60,7 @@ end)
 ```lua
 require("lazy").setup({
   {
-    'huggingface/hfcc.nvim',
+    'huggingface/llm.nvim',
     opts = {
       -- cf Setup
     }
@@ -56,10 +71,10 @@ require("lazy").setup({
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'huggingface/hfcc.nvim'
+Plug 'huggingface/llm.nvim'
 ```
 ```lua
-require('hfcc').setup({
+require('llm').setup({
   -- cf Setup
 })
 ```
@@ -67,9 +82,9 @@ require('hfcc').setup({
 ## Setup
 
 ```lua
-local hfcc = require('hfcc')
+local llm = require('llm')
 
-hfcc.setup({
+llm.setup({
   api_token = nil, -- cf Install paragraph
   model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
   -- parameters that are added to the request body
@@ -97,7 +112,5 @@ hfcc.setup({
 
 ## Commands
 
-There are currently two commands:
-- `HFccSuggestion` which was left in case people depended on it, depending on feedback will probably be removed
-- `HFccToggleAutoSuggest` which enables/disables insert mode suggest-as-you-type suggestions
+- `LLMToggleAutoSuggest` which enables/disables insert mode suggest-as-you-type suggestions
 

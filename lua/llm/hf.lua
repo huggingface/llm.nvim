@@ -1,7 +1,7 @@
-local config = require("hfcc.config")
+local config = require("llm.config")
 local fn = vim.fn
 local json = vim.json
-local utils = require("hfcc.utils")
+local utils = require("llm.utils")
 
 local M = {}
 
@@ -17,11 +17,11 @@ end
 local function extract_generation(data)
   local decoded_json = json.decode(data[1])
   if decoded_json == nil then
-    vim.notify("[HFcc] error getting response from API", vim.log.levels.ERROR)
+    vim.notify("[LLM] error getting response from API", vim.log.levels.ERROR)
     return ""
   end
   if decoded_json.error ~= nil then
-    vim.notify("[HFcc] " .. decoded_json.error, vim.log.levels.ERROR)
+    vim.notify("[LLM] " .. decoded_json.error, vim.log.levels.ERROR)
     return ""
   end
   local raw_generated_text = decoded_json[1].generated_text
@@ -29,7 +29,7 @@ local function extract_generation(data)
 end
 
 local function get_url()
-  local model = os.getenv("HUGGING_FACE_HUB_MODEL")
+  local model = os.getenv("LLM_NVIM_MODEL")
   if model == nil then
     model = config.get().model
   end
@@ -40,7 +40,7 @@ local function get_url()
   end
 end
 
-local function create_payload(request)
+local function build_payload(request)
   local params = config.get().query_params
   local request_body = {
     inputs = build_inputs(request.before, request.after),
@@ -52,12 +52,12 @@ local function create_payload(request)
       stop = { params.stop_token },
     },
   }
-  local f = assert(io.open(os.getenv("HOME") .. "/.tmp_hfcc_inputs.json", "w"))
+  local f = assert(io.open(os.getenv("HOME") .. "/.tmp_llm_inputs.json", "w"))
   f:write(json.encode(request_body))
   f:close()
 end
 
-local function create_curl_options()
+local function build_curl_options()
   local curl_options = ""
   local tls_skip_verify_insecure = config.get().tls_skip_verify_insecure
   if tls_skip_verify_insecure == true then
@@ -82,9 +82,9 @@ M.fetch_suggestion = function(request, callback)
     .. get_authorization_header()
     .. "-d@"
     .. os.getenv("HOME")
-    .. "/.tmp_hfcc_inputs.json"
-    .. create_curl_options()
-  create_payload(request)
+    .. "/.tmp_llm_inputs.json"
+    .. build_curl_options()
+  build_payload(request)
   local row, col = utils.get_cursor_pos()
   return fn.jobstart(query, {
     stdout_buffered = true,
