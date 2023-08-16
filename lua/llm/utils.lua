@@ -1,6 +1,7 @@
+local config = require("llm.config")
 local M = {}
 
-M.dump_table = function(o)
+function M.dump_table(o)
   if type(o) == "table" then
     local s = "{ "
     for k, v in pairs(o) do
@@ -15,7 +16,7 @@ M.dump_table = function(o)
   end
 end
 
-M.string_after_delim = function(str, delimiter)
+function M.string_after_delim(str, delimiter)
   local delimiter_index = string.find(str, delimiter, 1, true)
   local last_index = nil
   while delimiter_index do
@@ -29,7 +30,7 @@ M.string_after_delim = function(str, delimiter)
   end
 end
 
-M.split_str = function(str, separator)
+function M.split_str(str, separator)
   local parts = {}
   local start = 1
   local split_start, split_end = string.find(str, separator, start)
@@ -44,16 +45,28 @@ M.split_str = function(str, separator)
   return parts
 end
 
-M.rstrip = function(s)
+function M.rstrip(s)
   return string.gsub(s, "\n*$", "")
 end
 
-M.startswith = function(str, begin)
+function M.startswith(str, begin)
   return str:sub(1, #begin) == begin
 end
 
-M.get_cursor_pos = function()
+function M.get_cursor_pos()
   return unpack(vim.api.nvim_win_get_cursor(0))
+end
+
+function M.get_url()
+  local model = os.getenv("LLM_NVIM_MODEL")
+  if model == nil then
+    model = config.get().model
+  end
+  if M.startswith(model, "http://") or M.startswith(model, "https://") then
+    return model
+  else
+    return "https://api-inference.huggingface.co/models/" .. model
+  end
 end
 
 return M

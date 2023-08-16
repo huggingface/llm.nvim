@@ -5,13 +5,13 @@ local llm_ls = require("llm.language_server")
 
 local M = { setup_done = false }
 
-local create_cmds = function()
+local function create_cmds()
   vim.api.nvim_create_user_command("LLMToggleAutoSuggest", function()
     completion.toggle_suggestion()
   end, {})
 end
 
-M.setup = function(opts)
+function M.setup(opts)
   if M.setup_done then
     return
   end

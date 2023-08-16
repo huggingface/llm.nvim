@@ -28,18 +28,6 @@ local function extract_generation(data)
   return raw_generated_text
 end
 
-local function get_url()
-  local model = os.getenv("LLM_NVIM_MODEL")
-  if model == nil then
-    model = config.get().model
-  end
-  if utils.startswith(model, "http://") or utils.startswith(model, "https://") then
-    return model
-  else
-    return "https://api-inference.huggingface.co/models/" .. model
-  end
-end
-
 local function build_payload(request)
   local params = config.get().query_params
   local request_body = {
@@ -75,9 +63,9 @@ local function get_authorization_header()
   end
 end
 
-M.fetch_suggestion = function(request, callback)
+function M.fetch_suggestion(request, callback)
   local query = 'curl "'
-    .. get_url()
+    .. utils.get_url()
     .. '" -H "Content-type: application/json" '
     .. get_authorization_header()
     .. "-d@"

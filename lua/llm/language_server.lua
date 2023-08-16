@@ -1,6 +1,7 @@
 local api = vim.api
 local config = require("llm.config")
 local lsp = vim.lsp
+local utils = require("llm.utils")
 
 local M = {
   setup_done = false,
@@ -21,17 +22,14 @@ function M.extract_generation(response)
   return raw_generated_text
 end
 
+function M.set_configuration() end
+
 function M.get_completions(callback)
   if M.client_id == nil then
     return
   end
 
   local params = lsp.util.make_position_params()
-  params.model = os.getenv("LLM_NVIM_MODEL")
-  params.api_token = config.get().api_token
-  params.request_params = config.get().query_params
-  params.request_params.do_sample = config.get().query_params.temperature > 0
-  params.fim = config.get().fim
 
   local status, request_id = lsp.get_client_by_id(M.client_id).request("llm-ls/getCompletions", params, callback, 0)
 
@@ -47,10 +45,18 @@ function M.setup()
     return
   end
 
+  local configuration = {}
+  configuration.model = utils.get_url()
+  configuration.api_token = config.get().api_token
+  configuration.request_params = config.get().query_params
+  configuration.request_params.do_sample = config.get().query_params.temperature > 0
+  configuration.fim = config.get().fim
+
   local client_id = lsp.start({
     name = "llm-ls",
     cmd = { config.get().lsp.bin_path },
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    init_options = configuration,
   })
 
   if client_id == nil then

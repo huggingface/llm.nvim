@@ -154,7 +154,6 @@ function M.lsp_suggest()
       vim.notify("[LLM] " .. err.message, vim.log.levels.ERROR)
       return
     end
-    vim.print(context)
     local generated_text = llm_ls.extract_generation(result)
     local lines = parse_lsp_response(generated_text)
     if lines == nil then
@@ -173,7 +172,7 @@ function M.lsp_suggest()
         extmark.virt_lines[i - 1] = { { lines[i], M.hl_group } }
       end
     end
-    api.nvim_buf_set_extmark(0, M.ns_id, line - 1, col - 1, extmark)
+    api.nvim_buf_set_extmark(0, M.ns_id, line, col, extmark)
   end)
 end
 
