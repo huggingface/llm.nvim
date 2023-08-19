@@ -1,9 +1,9 @@
 # LLM powered development for Neovim
 
 > [!IMPORTANT]
-> This is currently a work in progress.
+> This is currently a work in progress, expect things to be broken!
 
-**llm.nvim** is a plugin for all things LLM-related.
+**llm.nvim** is a plugin for all things LLM.
 
 This project is influenced by [copilot.vim](https://github.com/github/copilot.vim) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
 
@@ -15,18 +15,21 @@ Formerly **hfcc.nvim**.
 
 ### Code completion
 
-This plugin supports code completion "ghost-text" style, a la Copilot.
+This plugin supports "ghost-text" code completion, à la Copilot.
 
 
-**llm.nvim** is an autocompletion plugin similar to Copilot with the added benefit of letting you pick your model on the Hugging Face Hub.
+### Choose your model
 
-You can also use any HTTP endpoint you want, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task).
+Requests for code generation are made via `curl` to an HTTP endpoint.
 
-You can also use it in conjunction with [llm-ls]() a language server where new features and development will happen.
+You can use the Hugging Face [Inference API](https://huggingface.co/inference-api) or your own HTTP endpoint, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task).
 
-You can use it as a standalone plugin that will curl a model on the Hugging Face Hub or the API of your choice.
+> [!NOTE]
+> Requests via `curl` are a legacy feature. This plugin is evolving to become a front-end for [`llm-ls`](https://github.com/huggingface/llm-ls).
 
 ## Install
+
+### With Inference API
 
 1. Create and get your API token from here https://huggingface.co/settings/tokens.
 
@@ -38,7 +41,15 @@ You can use it as a standalone plugin that will curl a model on the Hugging Face
 
 3. Choose your model on the [Hugging Face Hub](https://huggingface.co/), and, in order of precedence, you can either:
     1. Set the `LLM_NVIM_MODEL` environment variable
-    2. Pass `model = <model token>` in plugin opts
+    2. Pass `model = <model identifier>` in plugin opts
+
+### With your own HTTP endpoint
+
+All of the above still applies, but note:
+
+* When `api_token` is set, it will be passed as a header: `Authorization: Bearer <api_token>`.
+
+* Instead of setting a Hugging Face model identifier in `model`, set the URL for your HTTP endpoint.
 
 ### Using [packer](https://github.com/wbthomason/packer.nvim)
 
@@ -101,16 +112,22 @@ llm.setup({
     middle = "<fim_middle>",
     suffix = "<fim_suffix>",
   },
-  debounce_ms = 80,
+  debounce_ms = 150,
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
   max_context_after = 5000,
   max_context_before = 5000,
   tls_skip_verify_insecure = false,
+  -- llm-ls integration
+  lsp = {
+    enabled = false,
+    bin_path = "~/.local/share/nvim/llm_nvim/bin",
+  },
 })
+
 ```
 
 ## Commands
 
-- `LLMToggleAutoSuggest` which enables/disables insert mode suggest-as-you-type suggestions
+- `LLMToggleAutoSuggest` which enables/disables ghost text completion
 
