@@ -14,8 +14,7 @@ function M.cancel_request(request_id)
 end
 
 function M.extract_generation(response)
-  if response == nil then
-    vim.notify("[LLM] error getting response from llm-ls", vim.log.levels.ERROR)
+  if #response == 0 then
     return ""
   end
   local raw_generated_text = response[1].generated_text

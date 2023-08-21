@@ -27,10 +27,10 @@ local function parse_lsp_response(response)
     if after_fim_mid == nil then
       return nil
     end
-    local clean_response = utils.rstrip(after_fim_mid:gsub(stop_token, ""))
+    local clean_response = utils.trim(after_fim_mid:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   else
-    local clean_response = utils.rstrip(response:gsub(stop_token, ""))
+    local clean_response = utils.trim(response:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   end
 end
@@ -44,11 +44,11 @@ local function parse_response(prefix_len, response)
     if after_fim_mid == nil then
       return nil
     end
-    local clean_response = utils.rstrip(after_fim_mid:gsub(stop_token, ""))
+    local clean_response = utils.trim(after_fim_mid:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   else
     local prefix_removed = string.sub(response, prefix_len + 1)
-    local clean_response = utils.rstrip(prefix_removed:gsub(stop_token, ""))
+    local clean_response = utils.trim(prefix_removed:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   end
 end
