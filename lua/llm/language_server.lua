@@ -34,6 +34,7 @@ function M.get_completions(callback)
   params.request_params = config.get().query_params
   params.request_params.do_sample = config.get().query_params.temperature > 0
   params.fim = config.get().fim
+  params.language_id = vim.api.nvim_buf_get_option(0, "filetype")
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
