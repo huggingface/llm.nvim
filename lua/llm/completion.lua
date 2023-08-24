@@ -18,23 +18,6 @@ local M = {
   timer = nil,
 }
 
-local function parse_lsp_response(response)
-  local fim = config.get().fim
-  local stop_token = config.get().query_params.stop_token
-
-  if fim.enabled then
-    local after_fim_mid = utils.string_after_delim(response, "<fim_middle>")
-    if after_fim_mid == nil then
-      return nil
-    end
-    local clean_response = utils.trim(after_fim_mid:gsub(stop_token, ""))
-    return utils.split_str(clean_response, "\n")
-  else
-    local clean_response = utils.trim(response:gsub(stop_token, ""))
-    return utils.split_str(clean_response, "\n")
-  end
-end
-
 local function parse_response(prefix_len, response)
   local fim = config.get().fim
   local stop_token = config.get().query_params.stop_token
@@ -155,7 +138,7 @@ function M.lsp_suggest()
       return
     end
     local generated_text = llm_ls.extract_generation(result)
-    local lines = parse_lsp_response(generated_text)
+    local lines = utils.split_str(generated_text, "\n")
     if lines == nil then
       return
     end
