@@ -1,5 +1,5 @@
-local completion = require("hfcc.completion")
-local config = require("hfcc.config")
+local completion = require("llm.completion")
+local config = require("llm.config")
 
 local M = {
   setup_done = false,

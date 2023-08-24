@@ -1,16 +1,18 @@
 local api = vim.api
-local augroup = "hfcc.suggestion"
-local config = require("hfcc.config")
+local augroup = "llm.suggestion"
+local llm_ls = require("llm.language_server")
+local config = require("llm.config")
 local fn = vim.fn
-local hf = require("hfcc.hf")
-local utils = require("hfcc.utils")
+local hf = require("llm.hf")
+local utils = require("llm.utils")
 
 local M = {
   setup_done = false,
 
   fetch_job_id = nil,
-  hl_group = "HFccSuggestion",
-  ns_id = api.nvim_create_namespace("hfcc.suggestion"),
+  hl_group = "LLMSuggestion",
+  ns_id = api.nvim_create_namespace("llm.suggestion"),
+  request_id = nil,
   suggestion = nil,
   suggestion_enabled = true,
   timer = nil,
@@ -25,11 +27,11 @@ local function parse_response(prefix_len, response)
     if after_fim_mid == nil then
       return nil
     end
-    local clean_response = utils.rstrip(after_fim_mid:gsub(stop_token, ""))
+    local clean_response = utils.trim(after_fim_mid:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   else
     local prefix_removed = string.sub(response, prefix_len + 1)
-    local clean_response = utils.rstrip(prefix_removed:gsub(stop_token, ""))
+    local clean_response = utils.trim(prefix_removed:gsub(stop_token, ""))
     return utils.split_str(clean_response, "\n")
   end
 end
@@ -72,6 +74,10 @@ local function cancel_request()
     fn.jobstop(M.fetch_job_id)
     M.fetch_job_id = nil
   end
+  if M.request_id then
+    llm_ls.cancel_request(M.request_id)
+    M.request_id = nil
+  end
 end
 
 local function clear_preview()
@@ -89,7 +95,11 @@ function M.schedule()
 
   M.timer = fn.timer_start(config.get().debounce_ms, function()
     if fn.mode() == "i" then
-      M.suggest()
+      if config.get().lsp.enabled then
+        M.lsp_suggest()
+      else
+        M.suggest()
+      end
     end
   end)
 end
@@ -121,6 +131,34 @@ function M.suggest()
   end)
 end
 
+function M.lsp_suggest()
+  M.request_id = llm_ls.get_completions(function(err, result, context, config)
+    if err ~= nil then
+      vim.notify("[LLM] " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+    local generated_text = llm_ls.extract_generation(result)
+    local lines = utils.split_str(generated_text, "\n")
+    if lines == nil then
+      return
+    end
+    M.suggestion = lines
+    local col = context.params.position.character
+    local line = context.params.position.line
+    local extmark = {
+      virt_text_win_col = col,
+      virt_text = { { lines[1], M.hl_group } },
+    }
+    if #lines > 1 then
+      extmark.virt_lines = {}
+      for i = 2, #lines do
+        extmark.virt_lines[i - 1] = { { lines[i], M.hl_group } }
+      end
+    end
+    api.nvim_buf_set_extmark(0, M.ns_id, line, col, extmark)
+  end)
+end
+
 function M.complete()
   M.cancel()
 
@@ -143,7 +181,7 @@ end
 function M.toggle_suggestion()
   M.suggestion_enabled = not M.suggestion_enabled
   local state = M.suggestion_enabled and "on" or "off"
-  vim.notify("[HFcc] Auto suggestions are " .. state, vim.log.levels.INFO)
+  vim.notify("[LLM] Auto suggestions are " .. state, vim.log.levels.INFO)
 end
 
 function M.create_autocmds()
@@ -172,27 +210,6 @@ function M.setup()
   vim.api.nvim_command("highlight default link " .. M.hl_group .. " Comment")
 
   M.setup_done = true
-end
-
--- legacy
-function M.complete_command()
-  local before, after = get_context()
-  local before_len = string.len(before)
-
-  hf.fetch_suggestion({ before = before, after = after }, function(response, r, _)
-    if response == "" then
-      return
-    end
-    local lines = parse_response(before_len, response)
-    if lines == nil then
-      return
-    end
-    local line = api.nvim_buf_get_lines(0, r - 1, r, false)[1]
-    lines[1] = line .. lines[1]
-    local row_offset, col_offset = new_cursor_pos(lines, r)
-    api.nvim_buf_set_lines(0, r - 1, r, false, lines)
-    api.nvim_win_set_cursor(0, { row_offset, col_offset })
-  end)
 end
 
 return M
