@@ -69,4 +69,21 @@ function M.get_url()
   end
 end
 
+function M.endsWith(str, ending)
+  return ending == "" or string.sub(str, -string.len(ending)) == ending
+end
+
+function M.insertAt(dst, at, src)
+  at = math.max(1, math.min(at, #dst + 1))
+
+  local before = string.sub(dst, 1, at - 1)
+  local after = string.sub(dst, at)
+
+  local result = before .. src
+  if not M.endsWith(src, after) then
+    result = result .. after
+  end
+
+  return result
+end
 return M

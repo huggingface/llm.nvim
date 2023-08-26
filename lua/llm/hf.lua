@@ -38,6 +38,7 @@ local function build_payload(request)
       do_sample = params.temperature > 0,
       top_p = params.top_p,
       stop = { params.stop_token },
+      -- return_full_text = false,
     },
   }
   local f = assert(io.open(os.getenv("HOME") .. "/.tmp_llm_inputs.json", "w"))
