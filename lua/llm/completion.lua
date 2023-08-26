@@ -163,9 +163,9 @@ function M.complete()
   M.cancel()
 
   if M.suggestion ~= nil then
-    local r, _ = utils.get_cursor_pos()
+    local r, c = utils.get_cursor_pos()
     local line = api.nvim_buf_get_lines(0, r - 1, r, false)[1]
-    M.suggestion[1] = line .. M.suggestion[1]
+    M.suggestion[1] = utils.insertAt(line, c + 1, M.suggestion[1])
     local row_offset, col_offset = new_cursor_pos(M.suggestion, r)
     api.nvim_buf_set_lines(0, r - 1, r, false, M.suggestion)
     api.nvim_win_set_cursor(0, { row_offset, col_offset })
