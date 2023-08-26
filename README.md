@@ -121,8 +121,10 @@ llm.setup({
   -- llm-ls integration
   lsp = {
     enabled = false,
-    bin_path = "~/.local/share/nvim/llm_nvim/bin",
+    bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin/llm-ls",
   },
+  tokenizer_path = nil, -- when setting model as a URL, set this var
+  context_window = 8192, -- max number of tokens for the context window
 })
 
 ```

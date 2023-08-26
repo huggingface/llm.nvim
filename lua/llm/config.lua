@@ -22,10 +22,13 @@ local default_config = {
   max_context_after = 5000,
   max_context_before = 5000,
   tls_skip_verify_insecure = false,
+  ---@class llm_config_lsp
   lsp = {
     enabled = false,
-    bin_path = "~/.local/share/nvim/llm_nvim/bin",
+    bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin/llm-ls",
   },
+  tokenizer_path = nil,
+  context_window = 8192,
 }
 
 local M = {
