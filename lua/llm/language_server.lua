@@ -29,11 +29,13 @@ function M.get_completions(callback)
   end
 
   local params = lsp.util.make_position_params()
-  params.model = utils.get_url()
+  params.model = utils.get_model()
   params.api_token = config.get().api_token
   params.request_params = config.get().query_params
   params.request_params.do_sample = config.get().query_params.temperature > 0
   params.fim = config.get().fim
+  params.tokenizer_path = config.get().tokenizer_path
+  params.context_window = config.get().context_window
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then

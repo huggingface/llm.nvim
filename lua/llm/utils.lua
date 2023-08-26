@@ -57,11 +57,16 @@ function M.get_cursor_pos()
   return unpack(vim.api.nvim_win_get_cursor(0))
 end
 
-function M.get_url()
+function M.get_model()
   local model = os.getenv("LLM_NVIM_MODEL")
   if model == nil then
     model = config.get().model
   end
+  return model
+end
+
+function M.get_url()
+  local model = M.get_model()
   if M.startswith(model, "http://") or M.startswith(model, "https://") then
     return model
   else
