@@ -27,6 +27,49 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 > [!NOTE]
 > Requests via `curl` are a legacy feature. This plugin is evolving to become a front-end for [`llm-ls`](https://github.com/huggingface/llm-ls).
 
+#### Starcoder
+
+```lua
+{
+  query_params = {
+    stop_token = "<|endoftext|>",
+  },
+  fim = {
+    enabled = true,
+    prefix = "<fim_prefix>",
+    middle = "<fim_middle>",
+    suffix = "<fim_suffix>",
+  },
+  model = "bigcode/starcoder",
+  context_window = 8192,
+}
+```
+
+> [!NOTE]
+> These are the default config values
+
+#### CodeLlama
+
+```lua
+{
+  query_params = {
+    stop_token = "<EOT>",
+  },
+  fim = {
+    enabled = true,
+    prefix = "<PRE> ",
+    middle = " <MID>",
+    suffix = " <SUF>",
+  },
+  model = "codellama/CodeLlama-13b-hf",
+  context_window = 4096,
+}
+```
+
+> [!NOTE]
+> Spaces are important here
+
+
 ## Install
 
 ### With Inference API
