@@ -27,7 +27,7 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 > [!NOTE]
 > Requests via `curl` are a legacy feature. This plugin is evolving to become a front-end for [`llm-ls`](https://github.com/huggingface/llm-ls).
 
-#### Starcoder
+#### [Starcoder](https://huggingface.co/bigcode/starcoder)
 
 ```lua
 {
@@ -48,7 +48,7 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 > [!NOTE]
 > These are the default config values
 
-#### CodeLlama
+#### [CodeLlama](https://huggingface.co/codellama/CodeLlama-13b-hf)
 
 ```lua
 {
