@@ -40,7 +40,7 @@ local function build_payload(request)
       temperature = params.temperature,
       do_sample = params.temperature > 0,
       top_p = params.top_p,
-      -- return_full_text = false,
+      return_full_text = true,
     },
   }
   if params.stop_tokens ~= nil then
