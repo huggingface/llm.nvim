@@ -37,10 +37,12 @@ local function build_payload(request)
       temperature = params.temperature,
       do_sample = params.temperature > 0,
       top_p = params.top_p,
-      stop = { params.stop_token },
       -- return_full_text = false,
     },
   }
+  if params.stop_tokens ~= nil then
+    request_body.parameters.stop = params.stop_tokens
+  end
   local f = assert(io.open(os.getenv("HOME") .. "/.tmp_llm_inputs.json", "w"))
   f:write(json.encode(request_body))
   f:close()

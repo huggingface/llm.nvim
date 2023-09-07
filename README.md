@@ -31,9 +31,7 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 
 ```lua
 {
-  query_params = {
-    stop_token = "<|endoftext|>",
-  },
+  model_eos = "<|endoftext|>",
   fim = {
     enabled = true,
     prefix = "<fim_prefix>",
@@ -52,9 +50,7 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 
 ```lua
 {
-  query_params = {
-    stop_token = "<EOT>",
-  },
+  model_eos = "<EOT>",
   fim = {
     enabled = true,
     prefix = "<PRE> ",
@@ -141,12 +137,13 @@ local llm = require('llm')
 llm.setup({
   api_token = nil, -- cf Install paragraph
   model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
+  model_eos = "<|endoftext|>", -- needed to clean the model's output
   -- parameters that are added to the request body
   query_params = {
     max_new_tokens = 60,
     temperature = 0.2,
     top_p = 0.95,
-    stop_token = "<|endoftext|>",
+    stop_tokens = nil,
   },
   -- set this if the model supports fill in the middle
   fim = {
