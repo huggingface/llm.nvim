@@ -24,8 +24,11 @@ local function extract_generation(data)
     vim.notify("[LLM] " .. decoded_json.error, vim.log.levels.ERROR)
     return ""
   end
-  local raw_generated_text = decoded_json[1].generated_text
-  return raw_generated_text
+  if #decoded_json > 0 then
+    return decoded_json[1].generated_text
+  else
+    return decoded_json.generated_text
+  end
 end
 
 local function build_payload(request)
