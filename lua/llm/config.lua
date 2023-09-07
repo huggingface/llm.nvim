@@ -2,12 +2,14 @@
 local default_config = {
   api_token = nil,
   model = "bigcode/starcoderbase",
+  model_eos = "<|endoftext|>",
   ---@class llm_config_query_params
   query_params = {
     max_new_tokens = 60,
     temperature = 0.2,
     top_p = 0.95,
-    stop_token = "<|endoftext|>",
+    ---@type table|nil
+    stop_tokens = nil,
   },
   ---@class llm_config_fim
   fim = {

@@ -20,7 +20,7 @@ local M = {
 
 local function parse_response(prefix_len, response)
   local fim = config.get().fim
-  local stop_token = config.get().query_params.stop_token
+  local stop_token = config.get().model_eos
 
   if fim.enabled then
     local after_fim_mid = utils.string_after_delim(response, "<fim_middle>")
