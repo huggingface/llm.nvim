@@ -13,7 +13,7 @@ struct GeneratedText {
     generated_text: String,
 }
 
-async fn handler(state: State<AppState>) -> Json<Vec<GeneratedText>> {
+async fn default(state: State<AppState>) -> Json<Vec<GeneratedText>> {
     let mut lock = state.counter.lock().await;
     *lock += 1;
     println!("got request {}", lock);
@@ -22,13 +22,22 @@ async fn handler(state: State<AppState>) -> Json<Vec<GeneratedText>> {
     }])
 }
 
+async fn tgi(state: State<AppState>) -> Json<GeneratedText> {
+    let mut lock = state.counter.lock().await;
+    *lock += 1;
+    Json(GeneratedText {
+        generated_text: "<fim_prefix><fim_suffix><fim_middle>dummy".to_owned(),
+    })
+}
+
 #[tokio::main]
 async fn main() {
     let app_state = AppState {
         counter: Arc::new(Mutex::new(0)),
     };
     let app = Router::new()
-        .route("/", post(handler))
+        .route("/", post(default))
+        .route("/tgi", post(tgi))
         .with_state(app_state);
     let addr: SocketAddr = format!("{}:{}", "0.0.0.0", 4242)
         .parse()

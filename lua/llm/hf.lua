@@ -24,8 +24,11 @@ local function extract_generation(data)
     vim.notify("[LLM] " .. decoded_json.error, vim.log.levels.ERROR)
     return ""
   end
-  local raw_generated_text = decoded_json[1].generated_text
-  return raw_generated_text
+  if #decoded_json > 0 then
+    return decoded_json[1].generated_text
+  else
+    return decoded_json.generated_text
+  end
 end
 
 local function build_payload(request)
@@ -37,7 +40,7 @@ local function build_payload(request)
       temperature = params.temperature,
       do_sample = params.temperature > 0,
       top_p = params.top_p,
-      -- return_full_text = false,
+      return_full_text = true,
     },
   }
   if params.stop_tokens ~= nil then
