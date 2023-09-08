@@ -21,9 +21,9 @@ function M.setup(opts)
   config.setup(opts)
 
   local api_token = config.get().api_token
-  if api_token == nil then
-    vim.notify("[LLM] api token is empty, suggestion might not work", vim.log.levels.DEBUG)
-  end
+  -- if api_token == nil then
+  --   vim.notify("[LLM] api token is empty, suggestion might not work", vim.log.levels.DEBUG)
+  -- end
 
   llm_ls.setup()
 
