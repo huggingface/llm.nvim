@@ -7,17 +7,19 @@ local M = {}
 
 local function build_inputs(before, after)
   local fim = config.get().fim
+  local filename_prefix = "<filename>"
   if fim.enabled then
-    return fim.prefix .. before .. fim.suffix .. after .. fim.middle
+    return filename_prefix .. vim.fn.expand("%") .. "\n" .. fim.prefix .. before .. fim.suffix .. after .. fim.middle
   else
-    return before
+    return filename_prefix .. vim.fn.expand("%") .. "\n" .. before
   end
 end
 
+local next = next
 local function extract_generation(data)
   local decoded_json = json.decode(data[1])
-  if decoded_json == nil then
-    vim.notify("[LLM] error getting response from API", vim.log.levels.ERROR)
+  if not decoded_json or next(decoded_json) == nil then
+    vim.notify("[LLM] error decoding response from API " .. data[1], vim.log.levels.ERROR)
     return ""
   end
   if decoded_json.error ~= nil then
