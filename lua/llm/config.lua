@@ -40,7 +40,12 @@ local M = {
 local function get_token()
   local api_token = os.getenv("LLM_NVIM_API_TOKEN")
   if api_token == nil then
-    local default_home = os.getenv("HOME") .. "/.cache"
+    local default_home = ""
+    if vim.fn.has("win32") == 1 then
+      default_home = os.getenv("USERPROFILE") .. "/.cache"
+    else
+      default_home = os.getenv("HOME") .. "/.cache"
+    end
     local hf_cache_home = os.getenv("HF_HOME") or (default_home .. "/huggingface")
     local f = io.open(hf_cache_home .. "/token", "r")
     if not f then
