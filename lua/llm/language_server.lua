@@ -37,6 +37,7 @@ function M.get_completions(callback)
   params.fim = config.get().fim
   params.tokenizer_path = config.get().tokenizer_path
   params.context_window = config.get().context_window
+  params.tls_skip_verify_insecure = config.get().tls_skip_verify_insecure
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
