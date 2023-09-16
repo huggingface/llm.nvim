@@ -1,5 +1,7 @@
 local api = vim.api
 local config = require("llm.config")
+local fn = vim.fn
+local loop = vim.loop
 local lsp = vim.lsp
 local utils = require("llm.utils")
 
@@ -8,6 +10,87 @@ local M = {
 
   client_id = nil,
 }
+
+local function build_binary_name()
+  local os_uname = loop.os_uname()
+  local arch = os_uname.machine
+  local os = os_uname.sysname
+
+  local arch_map = {
+    x86_64 = "x86_64",
+    i686 = "i686",
+    arm64 = "aarch64",
+  }
+
+  local os_map = {
+    Linux = "unknown-linux-gnu",
+    Darwin = "apple-darwin",
+    Windows = "pc-windows-msvc",
+  }
+
+  if os == "Linux" then
+    local linux_distribution = utils.execute_command("cat /etc/os-release | grep '^ID=' | cut -d '=' -f 2")
+
+    if linux_distribution == "alpine" then
+      os_map.Linux = "unknown-linux-musl"
+    elseif linux_distribution == "raspbian" then
+      arch_map.armv7l = "arm"
+      os_map.Linux = "unknown-linux-gnueabihf"
+    else
+      -- Add mappings for other distributions as needed
+    end
+  end
+
+  local arch_prefix = arch_map[arch]
+  local os_suffix = os_map[os]
+
+  if not arch_prefix or not os_suffix then
+    vim.notify("[LLM] Unsupported architecture or OS: " .. arch .. " " .. os, vim.log.levels.ERROR)
+    return nil
+  end
+  return "llm-ls-" .. arch_prefix .. "-" .. os_suffix
+end
+
+local function build_url(bin_name)
+  return "https://github.com/huggingface/llm-ls/releases/download/"
+    .. config.get().lsp.version
+    .. "/"
+    .. bin_name
+    .. ".gz"
+end
+
+local function download_and_unzip(url, path)
+  local download_command = "curl -L -o " .. path .. ".gz " .. url
+  local unzip_command = "gunzip " .. path .. ".gz"
+  local chmod_command = "chmod +x " .. path
+
+  fn.system(download_command)
+
+  fn.system(unzip_command)
+
+  fn.system(chmod_command)
+end
+
+local function download_llm_ls()
+  local bin_path = config.get().lsp.bin_path
+  if bin_path ~= nil and fn.filereadable(bin_path) == 1 then
+    return bin_path
+  end
+  local bin_dir = vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin"
+  fn.system("mkdir -p " .. bin_dir)
+  local bin_name = build_binary_name()
+  if bin_name == nil then
+    return nil
+  end
+  local full_path = bin_dir .. "/" .. bin_name
+
+  if fn.filereadable(full_path) == 0 then
+    local url = build_url(bin_name)
+    download_and_unzip(url, full_path)
+    vim.notify("[LLM] succefully downloaded llm-ls", vim.log.levels.DEBUG)
+  end
+  return full_path
+end
 
 function M.cancel_request(request_id)
   lsp.get_client_by_id(M.client_id).cancel_request(request_id)
@@ -54,13 +137,19 @@ function M.get_completions(callback)
 end
 
 function M.setup()
-  if not config.get().lsp.enabled or M.setup_done then
+  if M.setup_done then
+    return
+  end
+
+  local llm_ls_path = download_llm_ls()
+  if llm_ls_path == nil then
+    vim.notify("[LLM] failed to download llm-ls", vim.log.levels.ERROR)
     return
   end
 
   local client_id = lsp.start({
     name = "llm-ls",
-    cmd = { config.get().lsp.bin_path },
+    cmd = { llm_ls_path },
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
   })
 

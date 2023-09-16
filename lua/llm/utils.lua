@@ -1,21 +1,6 @@
 local config = require("llm.config")
 local M = {}
 
-function M.dump_table(o)
-  if type(o) == "table" then
-    local s = "{ "
-    for k, v in pairs(o) do
-      if type(k) ~= "number" then
-        k = '"' .. k .. '"'
-      end
-      s = s .. "[" .. k .. "] = " .. M.dump_table(v) .. ","
-    end
-    return s .. "} "
-  else
-    return tostring(o)
-  end
-end
-
 function M.string_after_delim(str, delimiter)
   local delimiter_index = string.find(str, delimiter, 1, true)
   local last_index = nil
@@ -65,30 +50,33 @@ function M.get_model()
   return model
 end
 
-function M.get_url()
-  local model = M.get_model()
-  if M.startswith(model, "http://") or M.startswith(model, "https://") then
-    return model
-  else
-    return "https://api-inference.huggingface.co/models/" .. model
-  end
-end
-
-function M.endsWith(str, ending)
+function M.ends_with(str, ending)
   return ending == "" or string.sub(str, -string.len(ending)) == ending
 end
 
-function M.insertAt(dst, at, src)
+function M.insert_at(dst, at, src)
   at = math.max(1, math.min(at, #dst + 1))
 
   local before = string.sub(dst, 1, at - 1)
   local after = string.sub(dst, at)
 
   local result = before .. src
-  if not M.endsWith(src, after) then
+  if not M.ends_with(src, after) then
     result = result .. after
   end
 
   return result
 end
+
+function M.execute_command(command)
+  local handle = io.popen(command)
+  if handle == nil then
+    vim.notify("[LLM] error executing command: " .. command, vim.log.levels.ERROR)
+    return nil
+  end
+  local result = M.trim(handle:read("*a"))
+  handle:close()
+  return result
+end
+
 return M
