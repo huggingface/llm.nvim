@@ -27,6 +27,28 @@ You can use the Hugging Face [Inference API](https://huggingface.co/inference-ap
 
 The prompt sent to the model will always be sized to fit within the context window, with the number of tokens determined using [tokenizers](https://github.com/huggingface/tokenizers).
 
+## Installation
+
+`llm.nvim` relies `llm-ls` which can be installed via [mason.nvim](https://github.com/williamboman/mason.nvim). With `mason.nvim` installed run the following command to install `llm-ls`:
+
+```vim
+:MasonInstall llm-ls
+```
+
+Then reference `llm-ls` path in your `llm.nvim` configuration:
+
+```lua
+{
+  "huggingface/llm.nvim",
+  opts = {
+    lsp = {
+      enabled = true,
+      bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/mason/bin/llm-ls",
+    },
+  },
+},
+```
+
 ## Configuration
 
 ### Endpoint
