@@ -113,7 +113,7 @@ function M.get_completions(callback)
 
   local params = lsp.util.make_position_params()
   params.model = utils.get_model()
-  params.model_eos = config.get().model_eos
+  params.tokens_to_clear = config.get().tokens_to_clear
   params.api_token = config.get().api_token
   params.request_params = config.get().query_params
   params.request_params.do_sample = config.get().query_params.temperature > 0

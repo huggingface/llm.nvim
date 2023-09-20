@@ -2,7 +2,7 @@
 local default_config = {
   api_token = nil,
   model = "bigcode/starcoderbase",
-  model_eos = "<|endoftext|>",
+  tokens_to_clear = { "<|endoftext|>" },
   ---@class llm_config_query_params
   query_params = {
     max_new_tokens = 60,
