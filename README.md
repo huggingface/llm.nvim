@@ -93,6 +93,37 @@ All of the above still applies, but note:
 > [!NOTE]
 > Spaces are important here
 
+### [`llm-ls`](https://github.com/huggingface/llm-ls)
+
+By default, `llm-ls` is installed by `llm.nvim` the first time it is loaded. The binary is downloaded from the [release page](https://github.com/huggingface/llm-ls/releases) and stored in:
+```lua
+vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin"
+```
+
+When developing locally, when using mason or if you built your own binary because your platform is not supported, you can set the `lsp.bin_path` setting to the path of the binary.
+
+`lsp.version` is used only when `llm.nvim` downloads `llm-ls` from the release page.
+
+#### Mason
+
+You can install `llm-ls` via [mason.nvim](https://github.com/williamboman/mason.nvim). To do so, run the following command:
+
+```vim
+:MasonInstall llm-ls
+```
+
+Then reference `llm-ls`'s path in your configuration:
+
+```lua
+{
+  -- ...
+  lsp = {
+    bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/mason/bin/llm-ls",
+  },
+  -- ...
+}
+```
+
 ### Package manager
 
 #### Using [packer](https://github.com/wbthomason/packer.nvim)
@@ -134,7 +165,7 @@ require('llm').setup({
 })
 ```
 
-## Setup
+### Setup
 
 ```lua
 local llm = require('llm')
@@ -161,9 +192,9 @@ llm.setup({
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
   tls_skip_verify_insecure = false,
-  -- llm-ls configuration
+  -- llm-ls configuration, cf llm-ls section
   lsp = {
-    bin_path = nil, -- for local dev, or if you built your own binary
+    bin_path = nil,
     version = "0.0.3",
   },
   tokenizer_path = nil, -- when setting model as a URL, set this var
