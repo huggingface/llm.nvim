@@ -195,7 +195,7 @@ llm.setup({
   -- llm-ls configuration, cf llm-ls section
   lsp = {
     bin_path = nil,
-    version = "0.0.3",
+    version = "0.1.0",
   },
   tokenizer_path = nil, -- when setting model as a URL, set this var
   context_window = 8192, -- max number of tokens for the context window
