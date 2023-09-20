@@ -48,7 +48,7 @@ local function build_binary_name()
     vim.notify("[LLM] Unsupported architecture or OS: " .. arch .. " " .. os, vim.log.levels.ERROR)
     return nil
   end
-  return "llm-ls-" .. arch_prefix .. "-" .. os_suffix
+  return "llm-ls-" .. arch_prefix .. "-" .. os_suffix .. "-" .. config.get().lsp.version
 end
 
 local function build_url(bin_name)
