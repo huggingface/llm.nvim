@@ -93,7 +93,7 @@ All of the above still applies, but note:
 > [!NOTE]
 > Spaces are important here
 
-### `llm-ls`
+### [`llm-ls`](https://github.com/huggingface/llm-ls)
 
 By default, `llm-ls` is installed by `llm.nvim` the first time it is loaded. The binary is downloaded from the [release page](https://github.com/huggingface/llm-ls/releases) and stored in:
 ```lua
