@@ -48,7 +48,7 @@ local function build_binary_name()
     vim.notify("[LLM] Unsupported architecture or OS: " .. arch .. " " .. os, vim.log.levels.ERROR)
     return nil
   end
-  return "llm-ls-" .. arch_prefix .. "-" .. os_suffix .. "-" .. config.get().lsp.version
+  return "llm-ls-" .. arch_prefix .. "-" .. os_suffix
 end
 
 local function build_url(bin_name)
@@ -61,14 +61,17 @@ end
 
 local function download_and_unzip(url, path)
   local download_command = "curl -L -o " .. path .. ".gz " .. url
-  local unzip_command = "gunzip " .. path .. ".gz"
+  local unzip_command = "gunzip -c " .. path .. ".gz > " .. path
   local chmod_command = "chmod +x " .. path
+  local clean_zip_command = "rm " .. path .. ".gz"
 
   fn.system(download_command)
 
   fn.system(unzip_command)
 
   fn.system(chmod_command)
+
+  fn.system(clean_zip_command)
 end
 
 local function download_llm_ls()
@@ -82,7 +85,7 @@ local function download_llm_ls()
   if bin_name == nil then
     return nil
   end
-  local full_path = bin_dir .. "/" .. bin_name
+  local full_path = bin_dir .. "/" .. bin_name .. "-" .. config.get().lsp.version
 
   if fn.filereadable(full_path) == 0 then
     local url = build_url(bin_name)
