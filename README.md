@@ -68,6 +68,9 @@ All of the above still applies, but note:
   },
   model = "bigcode/starcoder",
   context_window = 8192,
+  tokenizer = {
+    repository = "bigcode/starcoder",
+  }
 }
 ```
 
@@ -87,6 +90,9 @@ All of the above still applies, but note:
   },
   model = "codellama/CodeLlama-13b-hf",
   context_window = 4096,
+  tokenizer = {
+    repository = "codellama/CodeLlama-13b-hf",
+  }
 }
 ```
 
