@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > This is currently a work in progress, expect things to be broken!
 
-**llm.nvim** is a plugin for all things LLM. It uses [`llm-ls`](https://github.com/huggingface/llm-ls) as a backend.
+**llm.nvim** is a plugin for all things LLM. It uses [**llm-ls**](https://github.com/huggingface/llm-ls) as a backend.
 
 This project is influenced by [copilot.vim](https://github.com/github/copilot.vim) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
 
@@ -68,6 +68,9 @@ All of the above still applies, but note:
   },
   model = "bigcode/starcoder",
   context_window = 8192,
+  tokenizer = {
+    repository = "bigcode/starcoder",
+  }
 }
 ```
 
@@ -87,32 +90,35 @@ All of the above still applies, but note:
   },
   model = "codellama/CodeLlama-13b-hf",
   context_window = 4096,
+  tokenizer = {
+    repository = "codellama/CodeLlama-13b-hf",
+  }
 }
 ```
 
 > [!NOTE]
 > Spaces are important here
 
-### [`llm-ls`](https://github.com/huggingface/llm-ls)
+### [**llm-ls**](https://github.com/huggingface/llm-ls)
 
-By default, `llm-ls` is installed by `llm.nvim` the first time it is loaded. The binary is downloaded from the [release page](https://github.com/huggingface/llm-ls/releases) and stored in:
+By default, **llm-ls** is installed by **llm.nvim** the first time it is loaded. The binary is downloaded from the [release page](https://github.com/huggingface/llm-ls/releases) and stored in:
 ```lua
 vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin"
 ```
 
 When developing locally, when using mason or if you built your own binary because your platform is not supported, you can set the `lsp.bin_path` setting to the path of the binary.
 
-`lsp.version` is used only when `llm.nvim` downloads `llm-ls` from the release page.
+`lsp.version` is used only when **llm.nvim** downloads **llm-ls** from the release page.
 
 #### Mason
 
-You can install `llm-ls` via [mason.nvim](https://github.com/williamboman/mason.nvim). To do so, run the following command:
+You can install **llm-ls** via [mason.nvim](https://github.com/williamboman/mason.nvim). To do so, run the following command:
 
 ```vim
 :MasonInstall llm-ls
 ```
 
-Then reference `llm-ls`'s path in your configuration:
+Then reference **llm-ls**'s path in your configuration:
 
 ```lua
 {
@@ -121,6 +127,42 @@ Then reference `llm-ls`'s path in your configuration:
     bin_path = vim.api.nvim_call_function("stdpath", { "data" }) .. "/mason/bin/llm-ls",
   },
   -- ...
+}
+```
+### Tokenizer
+
+**llm-ls** uses [**tokenizers**](https://github.com/huggingface/tokenizers) to make sure the prompt fits the `context_window`.
+
+To configure it, you have a few options:
+* No tokenization, **llm-ls** will count the number of characters instead:
+```lua
+{
+  tokenizer = nil,
+}
+```
+* from a local file on your disk:
+```lua
+{
+  tokenizer = {
+    path = "/path/to/my/tokenizer.json"
+  }
+}
+```
+* from a Hugging Face repository, **llm-ls** will attempt to download `tokenizer.json` at the root of the repository:
+```lua
+{
+  tokenizer = {
+    repository = "myusername/myrepo"
+  }
+}
+```
+* from an HTTP endpoint, **llm-ls** will attempt to download a file via an HTTP GET request:
+```lua
+{
+  tokenizer = {
+    url = "https://my-endpoint.example.com/mytokenizer.json",
+    to = "/download/path/of/mytokenizer.json"
+  }
 }
 ```
 
@@ -195,9 +237,9 @@ llm.setup({
   -- llm-ls configuration, cf llm-ls section
   lsp = {
     bin_path = nil,
-    version = "0.1.1",
+    version = "0.2.0",
   },
-  tokenizer_path = nil, -- when setting model as a URL, set this var
+  tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window
 })
 
