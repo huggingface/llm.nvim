@@ -27,7 +27,7 @@ local default_config = {
     bin_path = nil,
     version = "0.1.1",
   },
-  tokenizer_path = nil,
+  tokenizer = nil,
   context_window = 8192,
 }
 
