@@ -12,7 +12,7 @@ local M = {
   ns_id = api.nvim_create_namespace("llm.suggestion"),
   request_id = nil,
   suggestion = nil,
-  suggestion_enabled = true,
+  suggestions_enabled = true,
   timer = nil,
 }
 
@@ -102,12 +102,12 @@ function M.complete()
 end
 
 function M.should_complete()
-  return M.suggestion_enabled
+  return M.suggestions_enabled
 end
 
 function M.toggle_suggestion()
-  M.suggestion_enabled = not M.suggestion_enabled
-  local state = M.suggestion_enabled and "on" or "off"
+  M.suggestions_enabled = not M.suggestions_enabled
+  local state = M.suggestions_enabled and "on" or "off"
   vim.notify("[LLM] Auto suggestions are " .. state, vim.log.levels.INFO)
 end
 
@@ -129,13 +129,14 @@ function M.create_autocmds()
   })
 end
 
-function M.setup()
+function M.setup(suggestions_enabled)
   if M.setup_done then
     return
   end
 
   vim.api.nvim_command("highlight default link " .. M.hl_group .. " Comment")
 
+  M.suggestions_enabled = suggestions_enabled
   M.setup_done = true
 end
 
