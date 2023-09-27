@@ -27,7 +27,7 @@ function M.setup(opts)
 
   llm_ls.setup()
 
-  completion.setup()
+  completion.setup(config.get().enable_suggestions_on_startup)
   completion.create_autocmds()
 
   keymaps.setup()

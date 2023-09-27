@@ -241,6 +241,7 @@ llm.setup({
   },
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window
+  enable_suggestions_on_startup = true,
 })
 
 ```
