@@ -5,6 +5,16 @@ local M = {
   setup_done = false,
 }
 
+local function dismiss_suggestion()
+  if not completion.suggestion then
+    return
+  end
+  vim.schedule(function()
+    completion.cancel()
+    completion.suggestion = nil
+  end)
+end
+
 function M.setup()
   if M.setup_done then
     return
@@ -20,15 +30,9 @@ function M.setup()
     vim.schedule(completion.complete)
   end, { expr = true })
 
-  vim.keymap.set("i", dismiss_keymap, function()
-    if not completion.suggestion then
-      return
-    end
-    vim.schedule(function()
-      completion.cancel()
-      completion.suggestion = nil
-    end)
-  end, { expr = true })
+  vim.keymap.set("i", dismiss_keymap, dismiss_suggestion, { expr = true })
+
+  vim.keymap.set("n", dismiss_keymap, dismiss_suggestion, { expr = true })
 
   M.setup_done = true
 end
