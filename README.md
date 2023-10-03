@@ -248,5 +248,6 @@ llm.setup({
 
 ## Commands
 
-- `LLMToggleAutoSuggest` which enables/disables ghost text completion
+- `LLMToggleAutoSuggest` enables/disables automatic "suggest-as-you-type" suggestions
+- `LLMSuggestion` is used to manually request a suggestion
 
