@@ -1,8 +1,5 @@
 # LLM powered development for Neovim
 
-> [!IMPORTANT]
-> This is currently a work in progress, expect things to be broken!
-
 **llm.nvim** is a plugin for all things LLM. It uses [**llm-ls**](https://github.com/huggingface/llm-ls) as a backend.
 
 This project is influenced by [copilot.vim](https://github.com/github/copilot.vim) and [tabnine-nvim](https://github.com/codota/tabnine-nvim)
@@ -10,6 +7,11 @@ This project is influenced by [copilot.vim](https://github.com/github/copilot.vi
 Formerly **hfcc.nvim**.
 
 ![demonstration use of llm.nvim](assets/llm_nvim_demo.gif)
+
+> [!NOTE]
+> When using the Inference API, you will probably encounter some limitations. Subscribe to the *PRO* plan to avoid getting rate limited in the free tier.
+>
+> https://huggingface.co/pricing#pro
 
 ## Features
 
