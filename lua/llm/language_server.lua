@@ -111,6 +111,13 @@ function M.get_completions(callback)
   if M.client_id == nil then
     return
   end
+  if not lsp.buf_is_attached(0, M.client_id) then
+    vim.notify(
+      "Requesting completion for a detached buffer, check enable_suggestions_on_files' value",
+      vim.log.levels.WARN
+    )
+    return
+  end
 
   local params = lsp.util.make_position_params()
   params.model = utils.get_model()
