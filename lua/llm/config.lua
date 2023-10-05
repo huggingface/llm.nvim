@@ -30,6 +30,8 @@ local default_config = {
   tokenizer = nil,
   context_window = 8192,
   enable_suggestions_on_startup = true,
+  ---@type string|table
+  enable_suggestions_on_files = "*",
 }
 
 local M = {

@@ -107,10 +107,15 @@ function M.extract_generation(response)
   return raw_generated_text
 end
 
-function M.set_configuration() end
-
 function M.get_completions(callback)
   if M.client_id == nil then
+    return
+  end
+  if not lsp.buf_is_attached(0, M.client_id) then
+    vim.notify(
+      "Requesting completion for a detached buffer, check enable_suggestions_on_files' value",
+      vim.log.levels.WARN
+    )
     return
   end
 
@@ -165,7 +170,7 @@ function M.setup()
     api.nvim_create_augroup(augroup, { clear = true })
 
     api.nvim_create_autocmd("BufEnter", {
-      pattern = "*",
+      pattern = config.get().enable_suggestions_on_files,
       callback = function(ev)
         if not lsp.buf_is_attached(ev.buf, client_id) then
           lsp.buf_attach_client(ev.buf, client_id)

@@ -117,7 +117,7 @@ function M.create_autocmds()
   api.nvim_create_autocmd("InsertLeave", { pattern = "*", callback = M.cancel })
 
   api.nvim_create_autocmd("CursorMovedI", {
-    pattern = "*",
+    pattern = config.get().enable_suggestions_on_files,
     callback = function()
       if M.should_complete() then
         M.schedule()

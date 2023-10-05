@@ -168,6 +168,24 @@ To configure it, you have a few options:
 }
 ```
 
+### Suggestion behavior
+
+You can tune the way the suggestions behave:
+- `enable_suggestions_on_startup` lets you choose to enable or disable "suggest-as-you-type" suggestions on neovim startup. You can then toggle auto suggest with `LLMToggleAutoSuggest` (see [Commands](#commands))
+- `enable_suggestions_on_files` lets you enable suggestions only on specific files that match the pattern matching syntax you will provide. It can either be a string or a list of strings, for example:
+  - to match on all types of buffers: `enable_suggestions_on_files: "*"`
+  - to match on all files in `my_project/`: `enable_suggestions_on_files: "/path/to/my_project/*"`
+  - to match on all python and rust files: `enable_suggestions_on_files: { "*.py", "*.rs" }`
+
+
+### Commands
+
+**llm.nvim** provides the following commands:
+
+- `LLMToggleAutoSuggest` enables/disables automatic "suggest-as-you-type" suggestions
+- `LLMSuggestion` is used to manually request a suggestion
+
+
 ### Package manager
 
 #### Using [packer](https://github.com/wbthomason/packer.nvim)
@@ -244,12 +262,8 @@ llm.setup({
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window
   enable_suggestions_on_startup = true,
+  enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
 })
 
 ```
-
-## Commands
-
-- `LLMToggleAutoSuggest` enables/disables automatic "suggest-as-you-type" suggestions
-- `LLMSuggestion` is used to manually request a suggestion
 
