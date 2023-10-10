@@ -257,7 +257,7 @@ llm.setup({
   -- llm-ls configuration, cf llm-ls section
   lsp = {
     bin_path = nil,
-    version = "0.2.1",
+    version = "0.2.2",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window
