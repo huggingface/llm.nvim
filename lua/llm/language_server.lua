@@ -136,12 +136,42 @@ function M.get_completions(callback)
     local status, request_id = client.request("llm-ls/getCompletions", params, callback, 0)
 
     if not status then
-      vim.notify("[LLM] request to llm-ls failed", vim.log.levels.WARN)
+      vim.notify("[LLM] request 'llm-ls/getCompletions' failed", vim.log.levels.WARN)
     end
 
     return request_id
   else
     return nil
+  end
+end
+
+function M.accept_completion(completion_result)
+  local params = {}
+  params.request_id = completion_result.request_id
+  params.accepted_completion = 0
+  params.shown_completions = { 0 }
+  params.completions = completion_result.completions
+  local client = lsp.get_client_by_id(M.client_id)
+  if client ~= nil then
+    local status, _ = client.request("llm-ls/acceptCompletion", params, function() end, 0)
+
+    if not status then
+      vim.notify("[LLM] request 'llm-ls/acceptCompletions' failed", vim.log.levels.WARN)
+    end
+  end
+end
+
+function M.reject_completion(completion_result)
+  local params = {}
+  params.request_id = completion_result.request_id
+  params.shown_completions = { 0 }
+  local client = lsp.get_client_by_id(M.client_id)
+  if client ~= nil then
+    local status, _ = client.request("llm-ls/rejectCompletion", params, function() end, 0)
+
+    if not status then
+      vim.notify("[LLM] request 'llm-ls/rejectCompletions' failed", vim.log.levels.WARN)
+    end
   end
 end
 
