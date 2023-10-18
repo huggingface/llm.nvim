@@ -25,7 +25,7 @@ local default_config = {
   ---@class llm_config_lsp
   lsp = {
     bin_path = nil,
-    version = "0.3.0",
+    version = "0.4.0",
   },
   tokenizer = nil,
   context_window = 8192,

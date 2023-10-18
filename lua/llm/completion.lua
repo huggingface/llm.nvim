@@ -11,6 +11,7 @@ local M = {
   hl_group = "LLMSuggestion",
   ns_id = api.nvim_create_namespace("llm.suggestion"),
   request_id = nil,
+  shown_suggestion = nil,
   suggestion = nil,
   suggestions_enabled = true,
   timer = nil,
@@ -48,8 +49,16 @@ function M.cancel()
   clear_preview()
 end
 
-function M.schedule()
+function M.reject()
   M.cancel()
+  if M.shown_suggestion ~= nil then
+    llm_ls.reject_completion(M.shown_suggestion)
+    M.shown_suggestion = nil
+  end
+end
+
+function M.schedule()
+  M.reject()
 
   M.timer = fn.timer_start(config.get().debounce_ms, function()
     if fn.mode() == "i" then
@@ -64,7 +73,8 @@ function M.lsp_suggest()
       vim.notify("[LLM] " .. err.message, vim.log.levels.ERROR)
       return
     end
-    local generated_text = llm_ls.extract_generation(result)
+    local completions = result.completions
+    local generated_text = llm_ls.extract_generation(completions)
     local lines = utils.split_str(generated_text, "\n")
     if lines == nil then
       return
@@ -83,6 +93,7 @@ function M.lsp_suggest()
       end
     end
     api.nvim_buf_set_extmark(0, M.ns_id, line, col, extmark)
+    M.shown_suggestion = result
   end)
 end
 
@@ -97,6 +108,8 @@ function M.complete()
     api.nvim_buf_set_lines(0, r - 1, r, false, M.suggestion)
     api.nvim_win_set_cursor(0, { row_offset, col_offset })
 
+    llm_ls.accept_completion(M.shown_suggestion)
+    M.shown_suggestion = nil
     M.suggestion = nil
   end
 end
@@ -114,7 +127,7 @@ end
 function M.create_autocmds()
   api.nvim_create_augroup(augroup, { clear = true })
 
-  api.nvim_create_autocmd("InsertLeave", { pattern = "*", callback = M.cancel })
+  api.nvim_create_autocmd("InsertLeave", { pattern = "*", callback = M.reject })
 
   api.nvim_create_autocmd("CursorMovedI", {
     pattern = config.get().enable_suggestions_on_files,
@@ -122,7 +135,7 @@ function M.create_autocmds()
       if M.should_complete() then
         M.schedule()
       else
-        M.cancel()
+        M.reject()
         M.suggestion = nil
       end
     end,
