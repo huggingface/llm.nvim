@@ -101,6 +101,27 @@ All of the above still applies, but note:
 > [!NOTE]
 > Spaces are important here
 
+#### Ollama
+
+```lua
+{
+  tokens_to_clear = { "<EOT>" },
+  fim = {
+    enabled = true,
+    prefix = "<PRE> ",
+    middle = " <MID>",
+    suffix = " <SUF>",
+  },
+  model = "http://localhost:11435/api/generate",
+  context_window = 4096,
+  tokenizer = {
+    repository = "codellama/CodeLlama-7b-hf",
+  },
+  adaptor = "ollama",
+  request_body = { model = "codellama:7b-code" },
+}
+```
+
 ### [**llm-ls**](https://github.com/huggingface/llm-ls)
 
 By default, **llm-ls** is installed by **llm.nvim** the first time it is loaded. The binary is downloaded from the [release page](https://github.com/huggingface/llm-ls/releases) and stored in:
@@ -263,6 +284,8 @@ llm.setup({
   context_window = 8192, -- max number of tokens for the context window
   enable_suggestions_on_startup = true,
   enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
+  adaptor = "huggingface", -- The name of the provider llm-ls will adapt requests with
+  request_body = {}, -- Additional data you can add to an adaptor's request
 })
 
 ```

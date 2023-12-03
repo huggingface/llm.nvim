@@ -32,6 +32,8 @@ local default_config = {
   enable_suggestions_on_startup = true,
   ---@type string|table
   enable_suggestions_on_files = "*",
+  adaptor = "huggingface",
+  request_body = {},
 }
 
 local M = {
