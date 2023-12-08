@@ -79,46 +79,31 @@ All of the above still applies, but note:
 > [!NOTE]
 > These are the default config values
 
-#### [CodeLlama](https://huggingface.co/codellama/CodeLlama-13b-hf)
 
-```lua
-{
-  tokens_to_clear = { "<EOT>" },
-  fim = {
-    enabled = true,
-    prefix = "<PRE> ",
-    middle = " <MID>",
-    suffix = " <SUF>",
-  },
-  model = "codellama/CodeLlama-13b-hf",
-  context_window = 4096,
-  tokenizer = {
-    repository = "codellama/CodeLlama-13b-hf",
-  }
-}
-```
+### Adaptors
 
-> [!NOTE]
-> Spaces are important here
+Adaptors can be used to handle requests from alternative providers.
+
+Some adaptors require additional options through `request_body`, to pass additional data on requests to providers that would be unavailable otherwise.
 
 #### Ollama
 
 ```lua
 {
-  tokens_to_clear = { "<EOT>" },
-  fim = {
-    enabled = true,
-    prefix = "<PRE> ",
-    middle = " <MID>",
-    suffix = " <SUF>",
-  },
+  ---@see [Models](https://github.com/huggingface/llm.nvim#models) for options depending on the model given in your request_body 
   model = "http://localhost:11435/api/generate",
-  context_window = 4096,
-  tokenizer = {
-    repository = "codellama/CodeLlama-7b-hf",
-  },
   adaptor = "ollama",
   request_body = { model = "codellama:7b-code" },
+}
+```
+
+#### Open AI
+
+```lua
+{
+    model = "https://api.openai.com/v1/chat/completions"
+    adaptor = "openai"
+    request_body = { model = "gpt-3.5-turbo" }
 }
 ```
 
