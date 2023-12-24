@@ -79,6 +79,48 @@ All of the above still applies, but note:
 > [!NOTE]
 > These are the default config values
 
+#### [CodeLlama](https://huggingface.co/codellama/CodeLlama-13b-hf)
+
+```lua
+{
+  tokens_to_clear = { "<EOT>" },
+  fim = {
+    enabled = true,
+    prefix = "<PRE> ",
+    middle = " <MID>",
+    suffix = " <SUF>",
+  },
+  model = "codellama/CodeLlama-13b-hf",
+  context_window = 4096,
+  tokenizer = {
+    repository = "codellama/CodeLlama-13b-hf",
+  }
+}
+```
+
+> [!NOTE]
+> Spaces are important here
+
+#### Ollama
+
+```lua
+{
+  tokens_to_clear = { "<EOT>" },
+  fim = {
+    enabled = true,
+    prefix = "<PRE> ",
+    middle = " <MID>",
+    suffix = " <SUF>",
+  },
+  model = "http://localhost:11435/api/generate",
+  context_window = 4096,
+  tokenizer = {
+    repository = "codellama/CodeLlama-7b-hf",
+  },
+  adaptor = "ollama",
+  request_body = { model = "codellama:7b-code" },
+}
+```
 
 ### Adaptors
 
@@ -101,9 +143,9 @@ Some adaptors require additional options through `request_body`, to pass additio
 
 ```lua
 {
-    model = "https://api.openai.com/v1/chat/completions"
-    adaptor = "openai"
-    request_body = { model = "gpt-3.5-turbo" }
+  model = "https://api.openai.com/v1/chat/completions"
+  adaptor = "openai"
+  request_body = { model = "gpt-3.5-turbo" }
 }
 ```
 
