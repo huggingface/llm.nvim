@@ -7,11 +7,11 @@ local default_config = {
   tokens_to_clear = { "<|endoftext|>" },
   ---@class llm_config_request_body
   request_body = {
-    max_new_tokens = 60,
-    temperature = 0.2,
-    top_p = 0.95,
-    ---@type table|nil
-    stop_tokens = nil,
+    parameters = {
+      max_new_tokens = 60,
+      temperature = 0.2,
+      top_p = 0.95,
+    },
   },
   ---@class llm_config_fim
   fim = {

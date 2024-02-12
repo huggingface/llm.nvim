@@ -309,10 +309,11 @@ llm.setup({
   tokens_to_clear = { "<|endoftext|>" }, -- tokens to remove from the model's output
   -- parameters that are added to the request body, values are arbitrary, you can set any field:value pair here it will be passed as is to the backend
   request_body = {
-    max_new_tokens = 60,
-    temperature = 0.2,
-    top_p = 0.95,
-    stop_tokens = nil,
+    parameters = {
+      max_new_tokens = 60,
+      temperature = 0.2,
+      top_p = 0.95,
+    },
   },
   -- set this if the model supports fill in the middle
   fim = {
