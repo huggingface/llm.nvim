@@ -55,6 +55,8 @@ When `api_token` is set, it will be passed as a header: `Authorization: Bearer <
     1. Set the `LLM_NVIM_MODEL` environment variable
     2. Pass `model = <model identifier>` in plugin opts
 
+Note: the `model`'s value will be appended to the url like so : `{url}/{model}` as this is how we route requests to the right model.
+
 #### [Ollama](https://ollama.com/)
 
 ##### **backend = "ollama"**
@@ -76,6 +78,8 @@ Refer to Ollama's documentation on how to run ollama. Here is an example configu
 }
 ```
 
+Note: `model`'s value will be added to the request body.
+
 #### Open AI
 
 ##### **backend = "openai"**
@@ -90,6 +94,8 @@ Refer to Ollama's documentation on how to run ollama. Here is an example configu
   request_body = {}
 }
 ```
+
+Note: `model`'s value will be added to the request body.
 
 #### [TGI](https://github.com/huggingface/text-generation-inference)
 
