@@ -23,7 +23,7 @@ This plugin supports "ghost-text" code completion, à la Copilot.
 
 Requests for code generation are made via an HTTP request.
 
-You can use the Hugging Face [Inference API](https://huggingface.co/inference-api) or your own HTTP endpoint, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task) or [here](https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate).
+You can use the Hugging Face [Inference API](https://huggingface.co/inference-api) or your own HTTP endpoint, provided it adheres to the APIs listed in [backend](#backend).
 
 ### Always fit within the context window
 
@@ -43,6 +43,8 @@ When `api_token` is set, it will be passed as a header: `Authorization: Bearer <
 
 ##### **backend = "huggingface"**
 
+[API](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task)
+
 1. Create and get your API token from here https://huggingface.co/settings/tokens.
 
 2. Define how the plugin will read your token. For this you have multiple options, in order of precedence:
@@ -60,6 +62,8 @@ Note: the `model`'s value will be appended to the url like so : `{url}/{model}` 
 #### [Ollama](https://ollama.com/)
 
 ##### **backend = "ollama"**
+
+[API](https://github.com/ollama/ollama/blob/main/docs/api.md)
 
 Refer to Ollama's documentation on how to run ollama. Here is an example configuration:
 
@@ -100,6 +104,8 @@ Note: `model`'s value will be added to the request body.
 #### [TGI](https://github.com/huggingface/text-generation-inference)
 
 ##### **backend = "tgi"**
+
+[API](https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate)
 
 Refer to TGI's documentation on how to run TGI. Here is an example configuration:
 
