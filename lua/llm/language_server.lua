@@ -90,7 +90,7 @@ local function download_llm_ls()
   if fn.filereadable(full_path) == 0 then
     local url = build_url(bin_name)
     download_and_unzip(url, full_path)
-    vim.notify("[LLM] succefully downloaded llm-ls", vim.log.levels.DEBUG)
+    vim.notify("[LLM] successfully downloaded llm-ls", vim.log.levels.INFO)
   end
   return full_path
 end
@@ -112,23 +112,24 @@ function M.get_completions(callback)
     return
   end
   if not lsp.buf_is_attached(0, M.client_id) then
-    vim.notify(
-      "Requesting completion for a detached buffer, check enable_suggestions_on_files' value",
-      vim.log.levels.WARN
-    )
     return
   end
 
   local params = lsp.util.make_position_params()
   params.model = utils.get_model()
-  params.tokens_to_clear = config.get().tokens_to_clear
-  params.api_token = config.get().api_token
-  params.request_params = config.get().query_params
-  params.request_params.do_sample = config.get().query_params.temperature > 0
+  params.backend = config.get().backend
+  params.url = utils.get_url()
+  params.requestBody = config.get().request_body
+  params.tokensToClear = config.get().tokens_to_clear
+  params.apiToken = config.get().api_token
   params.fim = config.get().fim
-  params.tokenizer_config = config.get().tokenizer
-  params.context_window = config.get().context_window
-  params.tls_skip_verify_insecure = config.get().tls_skip_verify_insecure
+  local tokenizerConfig = config.get().tokenizer
+  if tokenizerConfig ~= nil and tokenizerConfig.repository ~= nil and tokenizerConfig.api_token == nil then
+    tokenizerConfig.api_token = config.get_token()
+  end
+  params.tokenizerConfig = tokenizerConfig
+  params.contextWindow = config.get().context_window
+  params.tlsSkipVerifyInsecure = config.get().tls_skip_verify_insecure
   params.ide = "neovim"
 
   local client = lsp.get_client_by_id(M.client_id)
@@ -147,9 +148,9 @@ end
 
 function M.accept_completion(completion_result)
   local params = {}
-  params.request_id = completion_result.request_id
-  params.accepted_completion = 0
-  params.shown_completions = { 0 }
+  params.requestId = completion_result.request_id
+  params.acceptedCompletion = 0
+  params.shownCompletions = { 0 }
   params.completions = completion_result.completions
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
@@ -163,8 +164,8 @@ end
 
 function M.reject_completion(completion_result)
   local params = {}
-  params.request_id = completion_result.request_id
-  params.shown_completions = { 0 }
+  params.requestId = completion_result.request_id
+  params.shownCompletions = { 0 }
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
     local status, _ = client.request("llm-ls/rejectCompletion", params, function() end, 0)
@@ -180,15 +181,26 @@ function M.setup()
     return
   end
 
-  local llm_ls_path = download_llm_ls()
-  if llm_ls_path == nil then
-    vim.notify("[LLM] failed to download llm-ls", vim.log.levels.ERROR)
-    return
+  local cmd
+  local host = config.get().lsp.host
+  if host == "localhost" then
+    host = "127.0.0.1"
+  end
+  local port = config.get().lsp.port
+  if host ~= nil and port ~= nil then
+    cmd = lsp.rpc.connect(host, port)
+  else
+    local llm_ls_path = download_llm_ls()
+    if llm_ls_path == nil then
+      vim.notify("[LLM] failed to download llm-ls", vim.log.levels.ERROR)
+      return
+    end
+    cmd = { llm_ls_path }
   end
 
   local client_id = lsp.start({
     name = "llm-ls",
-    cmd = { llm_ls_path },
+    cmd = cmd,
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
   })
 
