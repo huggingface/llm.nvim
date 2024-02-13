@@ -331,7 +331,7 @@ llm.setup({
     bin_path = nil,
     host = nil,
     port = nil,
-    version = "0.5.1",
+    version = "0.5.2",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window

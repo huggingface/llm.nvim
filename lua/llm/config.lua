@@ -29,7 +29,7 @@ local default_config = {
     bin_path = nil,
     host = nil,
     port = nil,
-    version = "0.5.1",
+    version = "0.5.2",
   },
   tokenizer = nil,
   context_window = 8192,
