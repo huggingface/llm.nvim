@@ -96,7 +96,10 @@ local function download_llm_ls()
 end
 
 function M.cancel_request(request_id)
-  lsp.get_client_by_id(M.client_id).cancel_request(request_id)
+  local client = lsp.get_client_by_id(M.client_id)
+  if client ~= nil then
+    client.cancel_request(request_id)
+  end
 end
 
 function M.extract_generation(response)
