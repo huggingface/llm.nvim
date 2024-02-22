@@ -215,6 +215,7 @@ function M.setup()
     api.nvim_create_augroup(augroup, { clear = true })
 
     api.nvim_create_autocmd("BufEnter", {
+      group = augroup,
       pattern = config.get().enable_suggestions_on_files,
       callback = function(ev)
         if not lsp.buf_is_attached(ev.buf, client_id) then
@@ -223,6 +224,13 @@ function M.setup()
       end,
     })
     M.client_id = client_id
+
+    api.nvim_create_autocmd("VimLeavePre", {
+      group = augroup,
+      callback = function()
+        lsp.stop_client(client_id)
+      end,
+    })
   end
 
   M.setup_done = true
