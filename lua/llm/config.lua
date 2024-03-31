@@ -29,6 +29,7 @@ local default_config = {
     bin_path = nil,
     host = nil,
     port = nil,
+    cmd_env = nil,
     version = "0.5.3",
   },
   tokenizer = nil,
