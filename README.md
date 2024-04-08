@@ -147,6 +147,25 @@ Refer to TGI's documentation on how to run TGI. Here is an example configuration
 > [!NOTE]
 > These are the default config values
 
+#### [CodeGemma](https://huggingface.co/google/codegemma-2b)
+
+```lua
+{
+  tokens_to_clear = { "<|file_separator|>" },
+  fim = {
+    enabled = true,
+    prefix = "<|fim_prefix|>",
+    middle = "<|fim_middle|>",
+    suffix = "<|fim_suffix|>",
+  },
+  model = "google/codegemma-2b",
+  context_window = 8192,
+  tokenizer = {
+    repository = "google/codegemma-2b",
+  }
+}
+```
+
 #### [CodeLlama](https://huggingface.co/codellama/CodeLlama-13b-hf)
 
 ```lua
