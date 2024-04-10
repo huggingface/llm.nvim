@@ -50,6 +50,14 @@ function M.get_model()
   return model
 end
 
+function M.get_url()
+  local model = os.getenv("LLM_NVIM_URL")
+  if model == nil then
+    model = config.get().url
+  end
+  return model
+end
+
 function M.ends_with(str, ending)
   return ending == "" or string.sub(str, -string.len(ending)) == ending
 end

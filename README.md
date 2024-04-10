@@ -23,7 +23,7 @@ This plugin supports "ghost-text" code completion, à la Copilot.
 
 Requests for code generation are made via an HTTP request.
 
-You can use the Hugging Face [Inference API](https://huggingface.co/inference-api) or your own HTTP endpoint, provided it adheres to the API specified [here](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task) or [here](https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate).
+You can use the Hugging Face [Inference API](https://huggingface.co/inference-api) or your own HTTP endpoint, provided it adheres to the APIs listed in [backend](#backend).
 
 ### Always fit within the context window
 
@@ -31,15 +31,25 @@ The prompt sent to the model will always be sized to fit within the context wind
 
 ## Configuration
 
-### Endpoint
+### Backend
 
-#### With Inference API
+**llm.nvim** can interface with multiple backends hosting models.
+
+You can override the url of the backend with the `LLM_NVIM_URL` environment variable. If url is `nil`, it will default to the Inference API's [default url](https://github.com/huggingface/llm-ls/blob/8926969265990202e3b399955364cc090df389f4/crates/custom-types/src/llm_ls.rs#L8)
+
+When `api_token` is set, it will be passed as a header: `Authorization: Bearer <api_token>`.
+
+#### Inference API
+
+##### **backend = "huggingface"**
+
+[API](https://huggingface.co/docs/api-inference/detailed_parameters#text-generation-task)
 
 1. Create and get your API token from here https://huggingface.co/settings/tokens.
 
 2. Define how the plugin will read your token. For this you have multiple options, in order of precedence:
     1. Pass `api_token = <your token>` in plugin opts - this is not recommended if you use a versioning tool for your configuration files
-    2. Set the `LLM_NVIM_API_TOKEN` environment variable
+    2. Set the `LLM_NVIM_HF_API_TOKEN` environment variable
     3. You can define your `HF_HOME` environment variable and create a file containing your token at `$HF_HOME/token`
     4. Install the [huggingface-cli](https://huggingface.co/docs/huggingface_hub/quick-start) and run `huggingface-cli login` - this will prompt you to enter your token and set it at the right path
 
@@ -47,13 +57,71 @@ The prompt sent to the model will always be sized to fit within the context wind
     1. Set the `LLM_NVIM_MODEL` environment variable
     2. Pass `model = <model identifier>` in plugin opts
 
-#### With your own HTTP endpoint
+Note: the `model`'s value will be appended to the url like so : `{url}/{model}` as this is how we route requests to the right model.
 
-All of the above still applies, but note:
+#### [Ollama](https://ollama.com/)
 
-* When `api_token` is set, it will be passed as a header: `Authorization: Bearer <api_token>`.
+##### **backend = "ollama"**
 
-* Instead of setting a Hugging Face model identifier in `model`, set the URL for your HTTP endpoint.
+[API](https://github.com/ollama/ollama/blob/main/docs/api.md)
+
+Refer to Ollama's documentation on how to run ollama. Here is an example configuration:
+
+```lua
+{
+  model = "codellama:7b",
+  url = "http://localhost:11434/api/generate",
+  -- cf https://github.com/ollama/ollama/blob/main/docs/api.md#parameters
+  request_body = {
+    -- Modelfile options for the model you use
+    options = {
+      temperature = 0.2,
+      top_p = 0.95,
+    }
+  }
+}
+```
+
+Note: `model`'s value will be added to the request body.
+
+#### Open AI
+
+##### **backend = "openai"**
+
+Refer to Ollama's documentation on how to run ollama. Here is an example configuration:
+
+```lua
+{
+  model = "codellama",
+  url = "http://localhost:8000/v1/completions",
+  -- cf https://github.com/abetlen/llama-cpp-python?tab=readme-ov-file#openai-compatible-web-server
+  request_body = {}
+}
+```
+
+Note: `model`'s value will be added to the request body.
+
+#### [TGI](https://github.com/huggingface/text-generation-inference)
+
+##### **backend = "tgi"**
+
+[API](https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate)
+
+Refer to TGI's documentation on how to run TGI. Here is an example configuration:
+
+```lua
+{
+  model = "bigcode/starcoder",
+  url = "http://localhost:8080/generate",
+  -- cf https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate
+  request_body = {
+    parameters = {
+      temperature = 0.2,
+      top_p = 0.95,
+    }
+  }
+}
+```
 
 ### Models
 
@@ -108,7 +176,7 @@ By default, **llm-ls** is installed by **llm.nvim** the first time it is loaded.
 vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin"
 ```
 
-When developing locally, when using mason or if you built your own binary because your platform is not supported, you can set the `lsp.bin_path` setting to the path of the binary.
+When developing locally, when using mason or if you built your own binary because your platform is not supported, you can set the `lsp.bin_path` setting to the path of the binary. You can also start **llm-ls** via tcp using the `--port [PORT]` option, which is useful when using a debugger.
 
 `lsp.version` is used only when **llm.nvim** downloads **llm-ls** from the release page.
 
@@ -155,6 +223,7 @@ To configure it, you have a few options:
 {
   tokenizer = {
     repository = "myusername/myrepo"
+    api_token = nil -- optional, in case the API token used for the backend is not the same
   }
 }
 ```
@@ -234,14 +303,17 @@ local llm = require('llm')
 
 llm.setup({
   api_token = nil, -- cf Install paragraph
-  model = "bigcode/starcoder", -- can be a model ID or an http(s) endpoint
+  model = "bigcode/starcoder", -- the model ID, behavior depends on backend
+  backend = "huggingface", -- backend ID, "huggingface" | "ollama" | "openai" | "tgi"
+  url = nil, -- the http url of the backend
   tokens_to_clear = { "<|endoftext|>" }, -- tokens to remove from the model's output
-  -- parameters that are added to the request body
-  query_params = {
-    max_new_tokens = 60,
-    temperature = 0.2,
-    top_p = 0.95,
-    stop_tokens = nil,
+  -- parameters that are added to the request body, values are arbitrary, you can set any field:value pair here it will be passed as is to the backend
+  request_body = {
+    parameters = {
+      max_new_tokens = 60,
+      temperature = 0.2,
+      top_p = 0.95,
+    },
   },
   -- set this if the model supports fill in the middle
   fim = {
@@ -257,7 +329,9 @@ llm.setup({
   -- llm-ls configuration, cf llm-ls section
   lsp = {
     bin_path = nil,
-    version = "0.4.0",
+    host = nil,
+    port = nil,
+    version = "0.5.2",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window

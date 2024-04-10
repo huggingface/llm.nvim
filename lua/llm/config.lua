@@ -1,15 +1,17 @@
 ---@class llm_config
 local default_config = {
   api_token = nil,
-  model = "bigcode/starcoderbase",
+  model = "bigcode/starcoder",
+  backend = "huggingface",
+  url = nil,
   tokens_to_clear = { "<|endoftext|>" },
-  ---@class llm_config_query_params
-  query_params = {
-    max_new_tokens = 60,
-    temperature = 0.2,
-    top_p = 0.95,
-    ---@type table|nil
-    stop_tokens = nil,
+  ---@class llm_config_request_body
+  request_body = {
+    parameters = {
+      max_new_tokens = 60,
+      temperature = 0.2,
+      top_p = 0.95,
+    },
   },
   ---@class llm_config_fim
   fim = {
@@ -25,7 +27,9 @@ local default_config = {
   ---@class llm_config_lsp
   lsp = {
     bin_path = nil,
-    version = "0.4.0",
+    host = nil,
+    port = nil,
+    version = "0.5.2",
   },
   tokenizer = nil,
   context_window = 8192,
@@ -38,8 +42,8 @@ local M = {
   config = nil,
 }
 
-local function get_token()
-  local api_token = os.getenv("LLM_NVIM_API_TOKEN")
+function M.get_token()
+  local api_token = os.getenv("LLM_NVIM_HF_API_TOKEN")
   if api_token == nil then
     local default_home = ""
     if vim.fn.has("win32") == 1 then
@@ -68,7 +72,7 @@ function M.setup(opts)
   local config = vim.tbl_deep_extend("force", default_config, opts or {})
 
   if config.api_token == nil then
-    config.api_token = get_token()
+    config.api_token = M.get_token()
   end
 
   M.config = config
