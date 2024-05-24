@@ -1,7 +1,7 @@
 ---@class llm_config
 local default_config = {
   api_token = nil,
-  model = "bigcode/starcoder",
+  model = "bigcode/starcoder2-15b",
   backend = "huggingface",
   url = nil,
   tokens_to_clear = { "<|endoftext|>" },
@@ -32,7 +32,7 @@ local default_config = {
     version = "0.5.3",
   },
   tokenizer = nil,
-  context_window = 8192,
+  context_window = 1024,
   enable_suggestions_on_startup = true,
   ---@type string|table
   enable_suggestions_on_files = "*",
