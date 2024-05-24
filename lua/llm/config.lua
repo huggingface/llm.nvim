@@ -29,13 +29,14 @@ local default_config = {
     bin_path = nil,
     host = nil,
     port = nil,
-    version = "0.5.2",
+    version = "0.5.3",
   },
   tokenizer = nil,
   context_window = 8192,
   enable_suggestions_on_startup = true,
   ---@type string|table
   enable_suggestions_on_files = "*",
+  disable_url_path_completion = false,
 }
 
 local M = {

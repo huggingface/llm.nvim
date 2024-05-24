@@ -39,6 +39,8 @@ You can override the url of the backend with the `LLM_NVIM_URL` environment vari
 
 When `api_token` is set, it will be passed as a header: `Authorization: Bearer <api_token>`.
 
+**llm-ls** will try to add the correct path to the url to get completions if it does not already end with said path. You can disable this behavior by setting `disable_url_path_completion` to true.
+
 #### Inference API
 
 ##### **backend = "huggingface"**
@@ -57,7 +59,7 @@ When `api_token` is set, it will be passed as a header: `Authorization: Bearer <
     1. Set the `LLM_NVIM_MODEL` environment variable
     2. Pass `model = <model identifier>` in plugin opts
 
-Note: the `model`'s value will be appended to the url like so : `{url}/{model}` as this is how we route requests to the right model.
+Note: the `model`'s value will be appended to the url like so : `{url}/model/{model}` as this is how we route requests to the right model.
 
 #### [Ollama](https://ollama.com/)
 
@@ -70,7 +72,7 @@ Refer to Ollama's documentation on how to run ollama. Here is an example configu
 ```lua
 {
   model = "codellama:7b",
-  url = "http://localhost:11434/api/generate",
+  url = "http://localhost:11434", -- llm-ls uses "/api/generate"
   -- cf https://github.com/ollama/ollama/blob/main/docs/api.md#parameters
   request_body = {
     -- Modelfile options for the model you use
@@ -93,7 +95,7 @@ Refer to Ollama's documentation on how to run ollama. Here is an example configu
 ```lua
 {
   model = "codellama",
-  url = "http://localhost:8000/v1/completions",
+  url = "http://localhost:8000", -- llm-ls uses "/v1/completions"
   -- cf https://github.com/abetlen/llama-cpp-python?tab=readme-ov-file#openai-compatible-web-server
   request_body = {}
 }
@@ -112,7 +114,7 @@ Refer to TGI's documentation on how to run TGI. Here is an example configuration
 ```lua
 {
   model = "bigcode/starcoder",
-  url = "http://localhost:8080/generate",
+  url = "http://localhost:8080", -- llm-ls uses "/generate"
   -- cf https://huggingface.github.io/text-generation-inference/#/Text%20Generation%20Inference/generate
   request_body = {
     parameters = {
@@ -331,12 +333,13 @@ llm.setup({
     bin_path = nil,
     host = nil,
     port = nil,
-    version = "0.5.2",
+    version = "0.5.3",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
   context_window = 8192, -- max number of tokens for the context window
   enable_suggestions_on_startup = true,
   enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
+  disable_url_path_completion = false, -- cf Backend
 })
 
 ```

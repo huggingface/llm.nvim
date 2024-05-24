@@ -134,6 +134,7 @@ function M.get_completions(callback)
   params.contextWindow = config.get().context_window
   params.tlsSkipVerifyInsecure = config.get().tls_skip_verify_insecure
   params.ide = "neovim"
+  params.disableUrlPathCompletion = config.get().disable_url_path_completion
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
