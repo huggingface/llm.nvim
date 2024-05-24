@@ -305,7 +305,7 @@ local llm = require('llm')
 
 llm.setup({
   api_token = nil, -- cf Install paragraph
-  model = "bigcode/starcoder", -- the model ID, behavior depends on backend
+  model = "bigcode/starcoder2-15b", -- the model ID, behavior depends on backend
   backend = "huggingface", -- backend ID, "huggingface" | "ollama" | "openai" | "tgi"
   url = nil, -- the http url of the backend
   tokens_to_clear = { "<|endoftext|>" }, -- tokens to remove from the model's output
@@ -336,7 +336,7 @@ llm.setup({
     version = "0.5.3",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
-  context_window = 8192, -- max number of tokens for the context window
+  context_window = 1024, -- max number of tokens for the context window
   enable_suggestions_on_startup = true,
   enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
   disable_url_path_completion = false, -- cf Backend
