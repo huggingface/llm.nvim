@@ -39,6 +39,16 @@ local default_config = {
   disable_url_path_completion = false,
 }
 
+local default_request_bodies = {
+  ollama = {
+    options = {
+      temperature = 0.2,
+      top_p = 0.95,
+    },
+  },
+  openai = {},
+}
+
 local M = {
   config = nil,
 }
@@ -71,6 +81,15 @@ function M.setup(opts)
   end
 
   local config = vim.tbl_deep_extend("force", default_config, opts or {})
+
+  if config.backend ~= "huggingface" and config.backend ~= "tgi" then
+    local def_req_body = default_request_bodies[config.backend] or {}
+    if opts and opts.request_body ~= nil then
+      config.request_body = vim.tbl_deep_extend("force", def_req_body, opts.request_body)
+    else
+      config.request_body = def_req_body
+    end
+  end
 
   if config.api_token == nil then
     config.api_token = M.get_token()
