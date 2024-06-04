@@ -202,7 +202,7 @@ function M.setup()
     cmd = { llm_ls_path }
   end
 
-  local client_id = lsp.start({
+  local client_id = lsp.start_client({
     name = "llm-ls",
     cmd = cmd,
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
