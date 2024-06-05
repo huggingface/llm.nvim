@@ -182,6 +182,8 @@ When developing locally, when using mason or if you built your own binary becaus
 
 `lsp.version` is used only when **llm.nvim** downloads **llm-ls** from the release page.
 
+`lsp.cmd_env` can be used to set environment variables for the **llm-ls** process.
+
 #### Mason
 
 You can install **llm-ls** via [mason.nvim](https://github.com/williamboman/mason.nvim). To do so, run the following command:
@@ -333,6 +335,7 @@ llm.setup({
     bin_path = nil,
     host = nil,
     port = nil,
+    cmd_env = nil, -- or { LLM_LOG_LEVEL = "DEBUG" } to set the log level of llm-ls
     version = "0.5.3",
   },
   tokenizer = nil, -- cf Tokenizer paragraph
