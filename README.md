@@ -182,7 +182,7 @@ When developing locally, when using mason or if you built your own binary becaus
 
 `lsp.version` is used only when **llm.nvim** downloads **llm-ls** from the release page.
 
-`lsp.cmd_env` can be used to set environment variables to be used for llm-ls. Currently only `LLM_LOG_LEVEL` might be useful.
+`lsp.cmd_env` can be used to set environment variables for the **llm-ls** process.
 
 #### Mason
 
