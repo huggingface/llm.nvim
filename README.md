@@ -97,7 +97,10 @@ Refer to Ollama's documentation on how to run ollama. Here is an example configu
   model = "codellama",
   url = "http://localhost:8000", -- llm-ls uses "/v1/completions"
   -- cf https://github.com/abetlen/llama-cpp-python?tab=readme-ov-file#openai-compatible-web-server
-  request_body = {}
+  request_body = {
+    temperature = 0.2,
+    top_p = 0.95,
+  }
 }
 ```
 

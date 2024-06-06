@@ -46,7 +46,10 @@ local default_request_bodies = {
       top_p = 0.95,
     },
   },
-  openai = {},
+  openai = {
+    temperature = 0.2,
+    top_p = 0.95,
+  },
 }
 
 local M = {
