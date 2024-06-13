@@ -68,7 +68,7 @@ function M.schedule()
 end
 
 function M.lsp_suggest()
-  M.request_id = llm_ls.get_completions(function(err, result, context, config)
+  M.request_id = llm_ls.get_completions(function(err, result, context, _conf)
     if err ~= nil then
       vim.notify("[LLM] " .. err.message, vim.log.levels.ERROR)
       return
