@@ -36,7 +36,7 @@ local function build_binary_name()
     elseif linux_distribution == "raspbian" then
       arch_map.armv7l = "arm"
       os_map.Linux = "unknown-linux-gnueabihf"
-    else
+      -- else
       -- Add mappings for other distributions as needed
     end
   end
