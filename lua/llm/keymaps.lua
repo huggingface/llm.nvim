@@ -29,15 +29,19 @@ function M.setup()
 
   local accept_keymap = config.get().accept_keymap
   local dismiss_keymap = config.get().dismiss_keymap
+  local map_normal = config.get().normal_mappings
+  local map_insert = config.get().insert_mappings
 
-  vim.keymap.set("i", accept_keymap, accept_suggestion, { expr = true })
+  if map_insert then
+    vim.keymap.set("i", accept_keymap, accept_suggestion, { expr = true })
+    vim.keymap.set("i", dismiss_keymap, dismiss_suggestion, { expr = true })
+  end
 
-  vim.keymap.set("n", accept_keymap, accept_suggestion, { expr = true })
-
-  vim.keymap.set("i", dismiss_keymap, dismiss_suggestion, { expr = true })
-
-  vim.keymap.set("n", dismiss_keymap, dismiss_suggestion, { expr = true })
-
+  if map_normal then
+    vim.keymap.set("n", accept_keymap, accept_suggestion, { expr = true })
+    vim.keymap.set("n", dismiss_keymap, dismiss_suggestion, { expr = true })
+  end
+  
   M.setup_done = true
 end
 
