@@ -181,9 +181,9 @@ function M.setup()
     return
   end
 
+  local cmd
   local host = config.get().lsp.host
   local bin_path = config.get().lsp.bin_path or "llm-ls"
-  local cmd = { bin_path }
 
   if host == "localhost" then
     host = "127.0.0.1"
@@ -198,6 +198,8 @@ function M.setup()
       return
     end
     cmd = { llm_ls_path }
+  else
+    cmd = { bin_path }
   end
 
   local client_id = lsp.start_client({
