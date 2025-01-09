@@ -191,7 +191,7 @@ function M.setup()
   local port = config.get().lsp.port
   if host ~= nil and port ~= nil then
     cmd = lsp.rpc.connect(host, port)
-  elseif vim.fn.executable(bin_path) == 0 then
+  elseif fn.executable(bin_path) == 0 then
     local llm_ls_path = download_llm_ls()
     if llm_ls_path == nil then
       vim.notify("[LLM] failed to download llm-ls", vim.log.levels.ERROR)
