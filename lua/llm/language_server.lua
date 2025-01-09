@@ -75,10 +75,6 @@ local function download_and_unzip(url, path)
 end
 
 local function download_llm_ls()
-  local bin_path = config.get().lsp.bin_path
-  if bin_path ~= nil and fn.filereadable(bin_path) == 1 then
-    return bin_path
-  end
   local bin_dir = vim.api.nvim_call_function("stdpath", { "data" }) .. "/llm_nvim/bin"
   fn.system("mkdir -p " .. bin_dir)
   local bin_name = build_binary_name()
@@ -187,19 +183,23 @@ function M.setup()
 
   local cmd
   local host = config.get().lsp.host
+  local bin_path = config.get().lsp.bin_path or "llm-ls"
+
   if host == "localhost" then
     host = "127.0.0.1"
   end
   local port = config.get().lsp.port
   if host ~= nil and port ~= nil then
     cmd = lsp.rpc.connect(host, port)
-  else
+  elseif fn.executable(bin_path) == 0 then
     local llm_ls_path = download_llm_ls()
     if llm_ls_path == nil then
       vim.notify("[LLM] failed to download llm-ls", vim.log.levels.ERROR)
       return
     end
     cmd = { llm_ls_path }
+  else
+    cmd = { bin_path }
   end
 
   local client_id = lsp.start_client({
