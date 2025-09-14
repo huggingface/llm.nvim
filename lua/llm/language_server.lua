@@ -94,7 +94,7 @@ end
 function M.cancel_request(request_id)
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    client.cancel_request(request_id)
+    client:cancel_request(request_id)
   end
 end
 
@@ -114,7 +114,9 @@ function M.get_completions(callback)
     return
   end
 
-  local params = lsp.util.make_position_params()
+  local params = {}
+  table.insert(params, lsp.util.make_position_params(nil, "utf-16"))
+
   params.model = utils.get_model()
   params.backend = config.get().backend
   params.url = utils.get_url()
@@ -134,7 +136,7 @@ function M.get_completions(callback)
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, request_id = client.request("llm-ls/getCompletions", params, callback, 0)
+    local status, request_id = client:request("llm-ls/getCompletions", params, callback, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/getCompletions' failed", vim.log.levels.WARN)
@@ -154,7 +156,7 @@ function M.accept_completion(completion_result)
   params.completions = completion_result.completions
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, _ = client.request("llm-ls/acceptCompletion", params, function() end, 0)
+    local status, _ = client:request("llm-ls/acceptCompletion", params, function() end, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/acceptCompletions' failed", vim.log.levels.WARN)
@@ -168,12 +170,35 @@ function M.reject_completion(completion_result)
   params.shownCompletions = { 0 }
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, _ = client.request("llm-ls/rejectCompletion", params, function() end, 0)
+    local status, _ = client:request("llm-ls/rejectCompletion", params, function() end, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/rejectCompletions' failed", vim.log.levels.WARN)
     end
   end
+end
+
+function M.lsp_init(client)
+  local augroup = api.nvim_create_augroup("llm.language_server", { clear = true })
+
+  api.nvim_create_autocmd("BufEnter", {
+    group = augroup,
+    pattern = config.get().enable_suggestions_on_files,
+    callback = function(ev)
+      if not vim.lsp.buf_is_attached(ev.buf, client.id) then
+        vim.lsp.buf_attach_client(ev.buf, client.id)
+      end
+    end,
+  })
+
+  api.nvim_create_autocmd("VimLeavePre", {
+    group = augroup,
+    callback = function()
+      vim.lsp.stop_client(client.id)
+    end,
+  })
+
+  M.client_id = client.id
 end
 
 function M.setup()
@@ -202,40 +227,24 @@ function M.setup()
     cmd = { bin_path }
   end
 
-  local client_id = lsp.start_client({
+  local root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]) or vim.fn.getcwd()
+
+  vim.lsp.start({
     name = "llm-ls",
     cmd = cmd,
     cmd_env = config.get().lsp.cmd_env,
-    root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    root_dir = root_dir,
+    on_init = M.lsp_init,
+    offset_encoding = "utf-16",
+    capabilities = {
+      offsetEncoding = { "utf-16" },
+      positionEncodings = { "utf-16" },
+    },
+    on_error = function()
+      vim.notify("[LLM] Error starting llm-ls", vim.log.levels.ERROR)
+    end,
   })
-
-  if client_id == nil then
-    vim.notify("[LLM] Error starting llm-ls", vim.log.levels.ERROR)
-  else
-    local augroup = "llm.language_server"
-
-    api.nvim_create_augroup(augroup, { clear = true })
-
-    api.nvim_create_autocmd("BufEnter", {
-      group = augroup,
-      pattern = config.get().enable_suggestions_on_files,
-      callback = function(ev)
-        if not lsp.buf_is_attached(ev.buf, client_id) then
-          lsp.buf_attach_client(ev.buf, client_id)
-        end
-      end,
-    })
-    M.client_id = client_id
-
-    api.nvim_create_autocmd("VimLeavePre", {
-      group = augroup,
-      callback = function()
-        lsp.stop_client(client_id)
-      end,
-    })
-  end
 
   M.setup_done = true
 end
-
 return M
