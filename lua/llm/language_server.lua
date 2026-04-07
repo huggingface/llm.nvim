@@ -114,26 +114,25 @@ function M.get_completions(callback)
     return
   end
 
-  local params = lsp.util.make_position_params()
-  params.model = utils.get_model()
-  params.backend = config.get().backend
-  params.url = utils.get_url()
-  params.requestBody = config.get().request_body
-  params.tokensToClear = config.get().tokens_to_clear
-  params.apiToken = config.get().api_token
-  params.fim = config.get().fim
-  local tokenizerConfig = config.get().tokenizer
-  if tokenizerConfig ~= nil and tokenizerConfig.repository ~= nil and tokenizerConfig.api_token == nil then
-    tokenizerConfig.api_token = config.get_token()
-  end
-  params.tokenizerConfig = tokenizerConfig
-  params.contextWindow = config.get().context_window
-  params.tlsSkipVerifyInsecure = config.get().tls_skip_verify_insecure
-  params.ide = "neovim"
-  params.disableUrlPathCompletion = config.get().disable_url_path_completion
-
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
+    local params = lsp.util.make_position_params(0, client.offset_encoding)
+    params.model = utils.get_model()
+    params.backend = config.get().backend
+    params.url = utils.get_url()
+    params.requestBody = config.get().request_body
+    params.tokensToClear = config.get().tokens_to_clear
+    params.apiToken = config.get().api_token
+    params.fim = config.get().fim
+    local tokenizerConfig = config.get().tokenizer
+    if tokenizerConfig ~= nil and tokenizerConfig.repository ~= nil and tokenizerConfig.api_token == nil then
+      tokenizerConfig.api_token = config.get_token()
+    end
+    params.tokenizerConfig = tokenizerConfig
+    params.contextWindow = config.get().context_window
+    params.tlsSkipVerifyInsecure = config.get().tls_skip_verify_insecure
+    params.ide = "neovim"
+    params.disableUrlPathCompletion = config.get().disable_url_path_completion
     local status, request_id = client.request("llm-ls/getCompletions", params, callback, 0)
 
     if not status then
