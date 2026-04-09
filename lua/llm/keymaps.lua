@@ -27,16 +27,12 @@ function M.setup()
     return
   end
 
+  local keymap_modes = config.get().keymap_modes
   local accept_keymap = config.get().accept_keymap
   local dismiss_keymap = config.get().dismiss_keymap
 
-  vim.keymap.set("i", accept_keymap, accept_suggestion, { expr = true })
-
-  vim.keymap.set("n", accept_keymap, accept_suggestion, { expr = true })
-
-  vim.keymap.set("i", dismiss_keymap, dismiss_suggestion, { expr = true })
-
-  vim.keymap.set("n", dismiss_keymap, dismiss_suggestion, { expr = true })
+  vim.keymap.set(keymap_modes, accept_keymap, accept_suggestion, { expr = true })
+  vim.keymap.set(keymap_modes, dismiss_keymap, dismiss_suggestion, { expr = true })
 
   M.setup_done = true
 end

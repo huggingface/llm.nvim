@@ -21,6 +21,7 @@ local default_config = {
     suffix = "<fim_suffix>",
   },
   debounce_ms = 150,
+  keymap_modes = {"i", "n"},
   accept_keymap = "<Tab>",
   dismiss_keymap = "<S-Tab>",
   tls_skip_verify_insecure = false,
