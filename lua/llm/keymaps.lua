@@ -6,15 +6,15 @@ local M = {
 }
 
 local function accept_suggestion()
-  if not completion.suggestion then
-    return
+  if not completion.suggestion or not completion.shown_suggestion then
+    return config.get().accept_keymap
   end
   vim.schedule(completion.complete)
 end
 
 local function dismiss_suggestion()
-  if not completion.suggestion then
-    return
+  if not completion.suggestion or not completion.shown_suggestion then
+    return config.get().dismiss_keymap
   end
   vim.schedule(function()
     completion.cancel()
