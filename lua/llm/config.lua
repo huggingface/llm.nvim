@@ -21,8 +21,11 @@ local default_config = {
     suffix = "<fim_suffix>",
   },
   debounce_ms = 150,
-  accept_keymap = "<Tab>",
-  dismiss_keymap = "<S-Tab>",
+  keymap = {
+    modes = { "i", "n" },
+    accept = "<Tab>",
+    dismiss = "<S-Tab>",
+  },
   tls_skip_verify_insecure = false,
   ---@class llm_config_lsp
   lsp = {
