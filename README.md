@@ -330,8 +330,12 @@ llm.setup({
     suffix = "<fim_suffix>",
   },
   debounce_ms = 150,
-  accept_keymap = "<Tab>",
-  dismiss_keymap = "<S-Tab>",
+  keymap = {
+    -- To disable automatic keymapping, set modes or the mapping to nil
+    modes = { "n", "i" },
+    accept = "<Tab>",
+    dismiss = "<S-Tab>",
+  },
   tls_skip_verify_insecure = false,
   -- llm-ls configuration, cf llm-ls section
   lsp = {
