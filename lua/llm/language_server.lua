@@ -114,7 +114,10 @@ function M.get_completions(callback)
     return
   end
 
-  local params = lsp.util.make_position_params()
+  local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+  local encoding = client and client.offset_encoding or "utf-16"
+
+  local params = lsp.util.make_position_params(0, encoding)
   params.model = utils.get_model()
   params.backend = config.get().backend
   params.url = utils.get_url()
