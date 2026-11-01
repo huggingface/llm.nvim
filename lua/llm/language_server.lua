@@ -202,11 +202,20 @@ function M.setup()
     cmd = { bin_path }
   end
 
-  local client_id = lsp.start_client({
+  local encoding = "utf-16"
+  local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), {
+    general = {
+      positionEncodings = { encoding },
+    },
+  })
+
+  local client_id = lsp.start({
     name = "llm-ls",
     cmd = cmd,
     cmd_env = config.get().lsp.cmd_env,
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    capabilities = capabilities,
+    offset_encoding = encoding,
   })
 
   if client_id == nil then
