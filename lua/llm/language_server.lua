@@ -94,7 +94,7 @@ end
 function M.cancel_request(request_id)
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    client.cancel_request(request_id)
+    client:cancel_request(request_id)
   end
 end
 
@@ -114,7 +114,10 @@ function M.get_completions(callback)
     return
   end
 
-  local params = lsp.util.make_position_params()
+  local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+  local encoding = client and client.offset_encoding or "utf-16"
+
+  local params = lsp.util.make_position_params(0, encoding)
   params.model = utils.get_model()
   params.backend = config.get().backend
   params.url = utils.get_url()
@@ -134,7 +137,7 @@ function M.get_completions(callback)
 
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, request_id = client.request("llm-ls/getCompletions", params, callback, 0)
+    local status, request_id = client:request("llm-ls/getCompletions", params, callback, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/getCompletions' failed", vim.log.levels.WARN)
@@ -154,7 +157,7 @@ function M.accept_completion(completion_result)
   params.completions = completion_result.completions
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, _ = client.request("llm-ls/acceptCompletion", params, function() end, 0)
+    local status, _ = client:request("llm-ls/acceptCompletion", params, function() end, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/acceptCompletions' failed", vim.log.levels.WARN)
@@ -168,7 +171,7 @@ function M.reject_completion(completion_result)
   params.shownCompletions = { 0 }
   local client = lsp.get_client_by_id(M.client_id)
   if client ~= nil then
-    local status, _ = client.request("llm-ls/rejectCompletion", params, function() end, 0)
+    local status, _ = client:request("llm-ls/rejectCompletion", params, function() end, 0)
 
     if not status then
       vim.notify("[LLM] request 'llm-ls/rejectCompletions' failed", vim.log.levels.WARN)
@@ -202,11 +205,20 @@ function M.setup()
     cmd = { bin_path }
   end
 
-  local client_id = lsp.start_client({
+  local encoding = "utf-16"
+  local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), {
+    general = {
+      positionEncodings = { encoding },
+    },
+  })
+
+  local client_id = lsp.start({
     name = "llm-ls",
     cmd = cmd,
     cmd_env = config.get().lsp.cmd_env,
     root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    capabilities = capabilities,
+    offset_encoding = encoding,
   })
 
   if client_id == nil then
