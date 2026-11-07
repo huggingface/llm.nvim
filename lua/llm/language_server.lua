@@ -19,6 +19,7 @@ local function build_binary_name()
   local arch_map = {
     x86_64 = "x86_64",
     i686 = "i686",
+    aarch64 = "aarch64",
     arm64 = "aarch64",
   }
 
